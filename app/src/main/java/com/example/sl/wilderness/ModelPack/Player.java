@@ -12,6 +12,7 @@ public class Player {
     private int colLocation;
     private int cash;
     private double health;
+
     private double equipmentMass;
     private List<Equipment> equipment;
 
@@ -67,5 +68,31 @@ public class Player {
         }
 
     }
+
+
+    public int getRowLocation() {
+        return rowLocation;
+    }
+
+    public int getColLocation() {
+        return colLocation;
+    }
+
+    public int getCash() {
+        return cash;
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public double getEquipmentMass() {
+        return equipmentMass;
+    }
+
+    public List<Equipment> getEquipment() {
+        return equipment;
+    }
+
 
 }
