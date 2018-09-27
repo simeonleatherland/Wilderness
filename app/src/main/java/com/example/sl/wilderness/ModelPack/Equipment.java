@@ -1,6 +1,10 @@
 package com.example.sl.wilderness.ModelPack;
 
 public class Equipment extends Item {
+    public double getMass() {
+        return mass;
+    }
+
     private double mass;
 
     public Equipment(){}

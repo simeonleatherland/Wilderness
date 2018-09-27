@@ -1,11 +1,14 @@
 package com.example.sl.wilderness.ModelPack;
 
+import com.example.sl.wilderness.Activity.MainActivity;
+
 public abstract class Item {
     private String description;
     private int value;
+    public static int ID;
 
     public Item(){
-
+        MainActivity.getNewItemID();
     }
 
     public Item(String inDesc, int inValue)
