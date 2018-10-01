@@ -27,6 +27,8 @@ public class DbSchema {
             public static final String TOWN = "is_town";
             public static final String STARRED = "starred";
             public static final String EXPLORED = "explored";
+            public static final String DESCRIPTION = "description";
+
 
 
         }
@@ -37,7 +39,8 @@ public class DbSchema {
         public static class Cols
         {
             public static final String ID = "item_id"; //allows multiple of the same types at the same row and col in the map
-            public static final String VALUE = "value";
+           public static final String PRICE = "price";
+
             public static final String DESCRIPTION = "description";
             public static final String TYPE = "item_type"; //equipment or food
             public static final String TYPEVALUE = "type_value_mass/health";

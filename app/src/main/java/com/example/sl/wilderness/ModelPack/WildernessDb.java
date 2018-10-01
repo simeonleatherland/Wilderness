@@ -45,23 +45,7 @@ public class WildernessDb {
 
 
 
-    //probably not going to be used
-    public void insertItem(Item i, int row, int col)
-    {
-        //create the player
-        ContentValues cv = new ContentValues();
-        cv.put(ItemTable.Cols.ID, i.ID);
-        cv.put(ItemTable.Cols.COLinMAP, col);
-        cv.put(ItemTable.Cols.ROWinMAP, row);
-        cv.put(ItemTable.Cols.HELD, false);
-        cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
-        cv.put(ItemTable.Cols.VALUE, i.getValue());
-        cv.put(ItemTable.Cols.TYPE, "nothing");
-        cv.put(ItemTable.Cols.TYPEVALUE, "nothing");
 
-        db.insert(ItemTable.NAME, null, cv);
-
-    }
     public void insertEquipment(Equipment i, int row, int col)
     {
         //create the player
@@ -71,7 +55,9 @@ public class WildernessDb {
         cv.put(ItemTable.Cols.ROWinMAP, row);
         cv.put(ItemTable.Cols.HELD, false);
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
-        cv.put(ItemTable.Cols.VALUE, i.getValue());
+        cv.put(ItemTable.Cols.VALUE, i.getMass());
+        cv.put(ItemTable.Cols.PRICE, i.getValue());
+
         cv.put(ItemTable.Cols.TYPE, "equipment");
         cv.put(ItemTable.Cols.TYPEVALUE, i.getMass());
 
@@ -95,17 +81,17 @@ public class WildernessDb {
 
     }
 
-    public void insertArea(Area a, int row, int col)
+    public void insertArea(Area a)
     {
         ContentValues cv = new ContentValues();
-        String id = row + "," + col;
+        String id = a.getRow() + "," + a.getCol();
         cv.put(AreaTable.Cols.ID, id);
-        cv.put(AreaTable.Cols.ROW, row);
-        cv.put(AreaTable.Cols.COL, col);
+        cv.put(AreaTable.Cols.ROW, a.getRow());
+        cv.put(AreaTable.Cols.COL, a.getCol());
         cv.put(AreaTable.Cols.TOWN, a.isTown());
         cv.put(AreaTable.Cols.STARRED, a.isStarred());
         cv.put(AreaTable.Cols.EXPLORED, a.isExplored());
-
+        cv.put(AreaTable.Cols.DESCRIPTION, a.getDescription());
         db.insert(AreaTable.NAME, null, cv);
     }
 
@@ -187,6 +173,8 @@ public class WildernessDb {
         cv.put(AreaTable.Cols.TOWN, a.isTown());
         cv.put(AreaTable.Cols.STARRED, a.isStarred());
         cv.put(AreaTable.Cols.EXPLORED, a.isExplored());
+        cv.put(AreaTable.Cols.DESCRIPTION, a.getDescription());
+
 
         db.update(AreaTable.NAME, cv, AreaTable.Cols.ID + " = " + id, wherevalue);
     }

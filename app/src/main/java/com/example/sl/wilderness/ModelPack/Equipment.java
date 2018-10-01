@@ -9,9 +9,9 @@ public class Equipment extends Item {
 
     public Equipment(){}
 
-    public Equipment(String inDesc, int inValue, double inMass)
+    public Equipment(String inDesc, int inValue, double inMass, int row, int col, boolean held)
     {
-        super(inDesc,inValue);
+        super(inDesc,inValue, row, col, held);
         mass = inMass;
     }
 }

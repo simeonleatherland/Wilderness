@@ -15,7 +15,7 @@ public class Player {
     private double equipmentMass;
     private List<Equipment> equipment;
 
-    public Player(int cash, double equipmentMass, int row, int col)
+    public Player(int cash, double equipmentMass, int row, int col, int health)
     {
         if(cash < 0)
         {
@@ -36,7 +36,7 @@ public class Player {
 
         }
         equipment = new LinkedList<>();
-        health = 100;
+        health = health;
         if(validateRowCol(row, col))
         {
             rowLocation = row;

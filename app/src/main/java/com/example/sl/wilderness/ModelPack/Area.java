@@ -11,6 +11,17 @@ public class Area {
     private String description;
     private boolean starred;
     private boolean explored;
+    private int row;
+    private int col;
+
+    public Area(boolean isTown, String description, boolean starred, boolean explored, int row, int col) {
+        this.isTown = isTown;
+        this.description = description;
+        this.starred = starred;
+        this.explored = explored;
+        this.row = row;
+        this.col = col;
+    }
 
     public Area()
     {
@@ -49,4 +60,19 @@ public class Area {
         return isTown;
     }
 
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void insertItem(Item items) {
+        this.items.add(items);
+    }
 }
