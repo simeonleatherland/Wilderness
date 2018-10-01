@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Area {
+
+
     private boolean isTown;
     private List<Item> items;
     private String description;
@@ -18,6 +20,13 @@ public class Area {
         explored = false;
     }
 
+    public boolean isStarred() {
+        return starred;
+    }
+
+    public boolean isExplored() {
+        return explored;
+    }
 
     public void setExplored()
     {
@@ -35,9 +44,9 @@ public class Area {
         starred = true;
     }
 
-    public void clearStarred()
-    {
-        starred = false;
+
+    public boolean isTown() {
+        return isTown;
     }
 
 }

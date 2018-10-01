@@ -6,6 +6,7 @@ public class DbSchema {
         public static final String NAME = "player";
         public static class Cols
         {
+            public static final String ID = "player_id"; //allows multiple of the same types at the same row and col in the map
             public static final String ROW = "row_location";
             public static final String COL = "col_location";
             public static final String CASH = "cash";
@@ -25,7 +26,7 @@ public class DbSchema {
             public static final String COL = "col_location";
             public static final String TOWN = "is_town";
             public static final String STARRED = "starred";
-            public static final String EXPLORED = "starred";
+            public static final String EXPLORED = "explored";
 
 
         }

@@ -33,6 +33,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.execSQL("create table " +  PlayerTable.NAME + "(" +
                 "_id integer primary key autoincrement, " +
+                PlayerTable.Cols.ID + ", " +
                 PlayerTable.Cols.ROW + ", " +
                 PlayerTable.Cols.COL + ", " +
                 PlayerTable.Cols.CASH + ", " +

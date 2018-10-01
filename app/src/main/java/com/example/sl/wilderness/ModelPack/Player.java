@@ -12,7 +12,6 @@ public class Player {
     private int colLocation;
     private int cash;
     private double health;
-
     private double equipmentMass;
     private List<Equipment> equipment;
 
@@ -48,7 +47,10 @@ public class Player {
             Log.i("BadRowCol", "Please fix row and col as its out of scope");
             throw new IllegalArgumentException("Row and Col are bad");
         }
+
     }
+
+
 
     private boolean validateRowCol(int row, int col) {
         return true;

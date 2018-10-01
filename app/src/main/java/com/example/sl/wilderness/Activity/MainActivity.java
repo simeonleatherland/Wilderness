@@ -9,6 +9,8 @@ public class MainActivity extends AppCompatActivity {
 
     //this is used as the key and unique number for items
     public static int NUMITEMS;
+    public static int PLAYERVERSION;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +20,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public static int getVersion(){
+        PLAYERVERSION ++;
+        return PLAYERVERSION;
+    }
+    public static int getNonUpdatingVersion(){return PLAYERVERSION;}
     public static int getNewItemID()
     {
         NUMITEMS++;
