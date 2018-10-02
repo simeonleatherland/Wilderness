@@ -48,9 +48,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 ItemTable.Cols.HELD + ", " +
                 ItemTable.Cols.TYPE + ", " +
                 ItemTable.Cols.DESCRIPTION + ", " +
-                ItemTable.Cols.VALUE + ", " +
+                ItemTable.Cols.PRICE + ", " +
                 ItemTable.Cols.TYPEVALUE + ") " );
-
 
     }
 

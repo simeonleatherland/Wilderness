@@ -1,14 +1,20 @@
-package com.example.sl.wilderness.ModelPack;
+package com.example.sl.wilderness.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.sl.wilderness.Activity.MainActivity;
+import com.example.sl.wilderness.Activity.Navigation;
 import com.example.sl.wilderness.Database.DbHelper;
 import com.example.sl.wilderness.Database.DbSchema.AreaTable;
 import com.example.sl.wilderness.Database.DbSchema.PlayerTable;
 import com.example.sl.wilderness.Database.DbSchema.ItemTable;
+import com.example.sl.wilderness.ModelPack.Area;
+import com.example.sl.wilderness.ModelPack.Equipment;
+import com.example.sl.wilderness.ModelPack.Food;
+import com.example.sl.wilderness.ModelPack.Item;
+import com.example.sl.wilderness.ModelPack.Player;
+
 public class WildernessDb {
     private SQLiteDatabase db;
 
@@ -25,7 +31,7 @@ public class WildernessDb {
         //create the player
         ContentValues cv = new ContentValues();
         //gets and updagtes the player version so when upgrading you can update the correct one
-        cv.put(PlayerTable.Cols.ID, MainActivity.getVersion());
+        cv.put(PlayerTable.Cols.ID, Navigation.getVersion());
         cv.put(PlayerTable.Cols.COL, p.getColLocation());
         cv.put(PlayerTable.Cols.ROW, p.getRowLocation());
         cv.put(PlayerTable.Cols.CASH, p.getCash());
@@ -44,8 +50,6 @@ public class WildernessDb {
     }
 
 
-
-
     public void insertEquipment(Equipment i, int row, int col)
     {
         //create the player
@@ -55,7 +59,6 @@ public class WildernessDb {
         cv.put(ItemTable.Cols.ROWinMAP, row);
         cv.put(ItemTable.Cols.HELD, false);
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
-        cv.put(ItemTable.Cols.VALUE, i.getMass());
         cv.put(ItemTable.Cols.PRICE, i.getValue());
 
         cv.put(ItemTable.Cols.TYPE, "equipment");
@@ -73,7 +76,7 @@ public class WildernessDb {
         cv.put(ItemTable.Cols.ROWinMAP, row);
         cv.put(ItemTable.Cols.HELD, false);
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
-        cv.put(ItemTable.Cols.VALUE, i.getValue());
+        cv.put(ItemTable.Cols.PRICE, i.getValue());
         cv.put(ItemTable.Cols.TYPE, "food");
         cv.put(ItemTable.Cols.TYPEVALUE, i.getHealth());
 
@@ -100,7 +103,7 @@ public class WildernessDb {
     public void removePlayer(Player p )
     {
         String[] wherevalue = {};
-        db.delete(PlayerTable.NAME, PlayerTable.Cols.ID +" = " + MainActivity.getNonUpdatingVersion(), wherevalue);
+        db.delete(PlayerTable.NAME, PlayerTable.Cols.ID +" = " + Navigation.getNonUpdatingVersion(), wherevalue);
 
     }
 
@@ -127,7 +130,7 @@ public class WildernessDb {
     {
         String[] whereValues = {};
         ContentValues cv = new ContentValues();
-        cv.put(PlayerTable.Cols.ID, MainActivity.getNonUpdatingVersion());
+        cv.put(PlayerTable.Cols.ID, Navigation.getNonUpdatingVersion());
         cv.put(PlayerTable.Cols.COL, p.getColLocation());
         cv.put(PlayerTable.Cols.ROW, p.getRowLocation());
         cv.put(PlayerTable.Cols.CASH, p.getCash());
@@ -141,7 +144,7 @@ public class WildernessDb {
             insertEquipment(i,-1,-1);
         }
 
-        db.update(PlayerTable.NAME, cv, PlayerTable.Cols.ID + " = " + MainActivity.getNonUpdatingVersion(), whereValues);
+        db.update(PlayerTable.NAME, cv, PlayerTable.Cols.ID + " = " + Navigation.getNonUpdatingVersion(), whereValues);
     }
 
 
@@ -156,7 +159,7 @@ public class WildernessDb {
         cv.put(ItemTable.Cols.ROWinMAP, col);
         cv.put(ItemTable.Cols.HELD, false);
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
-        cv.put(ItemTable.Cols.VALUE, i.getValue());
+        cv.put(ItemTable.Cols.PRICE, i.getValue());
         String[] whereValue = {};
         db.update(ItemTable.NAME,cv, ItemTable.Cols.ID +" = " + i.ID, whereValue);
 

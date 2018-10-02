@@ -1,6 +1,6 @@
 package com.example.sl.wilderness.ModelPack;
 
-import com.example.sl.wilderness.Activity.MainActivity;
+import com.example.sl.wilderness.Activity.Navigation;
 
 public abstract class Item {
     private String description;
@@ -12,7 +12,7 @@ public abstract class Item {
     public static int ID;
 
     public Item(){
-        MainActivity.getNewItemID();
+        Navigation.getNewItemID();
     }
 
     public Item(String inDesc, int inValue, int inRow, int inCol, boolean held)
