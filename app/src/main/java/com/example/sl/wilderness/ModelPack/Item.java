@@ -15,6 +15,7 @@ public abstract class Item {
         Navigation.getNewItemID();
     }
 
+
     public Item(String inDesc, int inValue, int inRow, int inCol, boolean held)
     {
         if(inDesc == null)

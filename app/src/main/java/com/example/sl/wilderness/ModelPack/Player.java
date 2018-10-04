@@ -51,6 +51,47 @@ public class Player {
     }
 
 
+    public void move(int row, int col, GameData g) throws IllegalArgumentException
+    {
+        //increase to what the user wants to do... increase, then test to see if it fits
+        //assume if passes testGrid you can move to that location
+        if(row != 0 && col == 0)
+        {
+            rowLocation += row;
+            if(rowLocation == g.ROW)
+            {
+                rowLocation--;
+                throw new IllegalArgumentException();
+            }
+            else if(rowLocation < 0)
+            {
+                rowLocation++;
+                throw new IllegalArgumentException();
+            }
+
+        }
+        else if(row == 0 && col != 0)
+        {
+            //increase col location
+            colLocation+=col;
+            //if its greater than the col location or its less than 0
+            if(colLocation == g.COL )
+            {
+                colLocation--;
+                throw new IllegalArgumentException();
+            }
+            else if(colLocation < 0)
+            {
+                colLocation++;
+                throw new IllegalArgumentException();
+            }
+
+        }
+
+
+    }
+
+
 
     private boolean validateRowCol(int row, int col) {
         return true;

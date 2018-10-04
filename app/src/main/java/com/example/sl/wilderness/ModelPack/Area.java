@@ -14,6 +14,20 @@ public class Area {
     private int row;
     private int col;
 
+    public Area(boolean isTown,List<Item> list,  String description, boolean starred, boolean explored, int row, int col) {
+        this.isTown = isTown;
+        this.description = description;
+        this.starred = starred;
+        this.explored = explored;
+        this.row = row;
+        this.col = col;
+        if(list != null)
+        {
+            items = list;
+
+        }
+    }
+
     public Area(boolean isTown, String description, boolean starred, boolean explored, int row, int col) {
         this.isTown = isTown;
         this.description = description;
@@ -21,7 +35,11 @@ public class Area {
         this.explored = explored;
         this.row = row;
         this.col = col;
+        items = new LinkedList<>();
     }
+
+
+
 
     public Area()
     {

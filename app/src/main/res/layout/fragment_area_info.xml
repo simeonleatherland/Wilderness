@@ -32,7 +32,7 @@
     <TextView
         android:id="@+id/error"
         android:layout_width="wrap_content"
-        android:layout_height="91dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
 
