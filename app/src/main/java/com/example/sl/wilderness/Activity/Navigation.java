@@ -22,19 +22,20 @@ public class Navigation extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         //tries to find the fragment by the id of the framelayout in this activity
+        AreaInfo ai = (AreaInfo)fm.findFragmentById(R.id.areanav);
+
         StatusBar sb = (StatusBar)fm.findFragmentById(R.id.status);
-        AreaInfo ai = (AreaInfo)fm.findFragmentById(R.id.area);
 
         //try find the fragment, if it doesnt exist then create it
         if(ai == null)
         {
             ai = new AreaInfo();
-            fm.beginTransaction().add(R.id.area, ai).commit();
+            fm.beginTransaction().add(R.id.areanav, ai).commit();
         }
         if(sb == null)
         {
             sb = new StatusBar();
-            fm.beginTransaction().add(R.id.status, sb).commit();
+            fm.beginTransaction().add(R.id.statusnav , sb).commit();
         }
 
 
