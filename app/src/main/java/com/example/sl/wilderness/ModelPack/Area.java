@@ -93,4 +93,12 @@ public class Area {
     public void insertItem(Item items) {
         this.items.add(items);
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void clearStarred() {
+        starred = false;
+    }
 }

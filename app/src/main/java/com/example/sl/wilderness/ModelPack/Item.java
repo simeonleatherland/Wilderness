@@ -42,6 +42,10 @@ public abstract class Item {
         return  description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public boolean getHeld() {
         return held;
     }

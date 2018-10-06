@@ -1,12 +1,19 @@
 package com.example.sl.wilderness.Activity;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.SharedPreferences;
+import android.nfc.tech.NfcA;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sl.wilderness.Fragments.AreaInfo;
 import com.example.sl.wilderness.Fragments.StatusBar;
@@ -18,7 +25,7 @@ import com.example.sl.wilderness.R;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Navigation extends AppCompatActivity {
+public class Navigation extends AppCompatActivity implements AreaInfo.OnDescriptionClickedListener {
 
     //this is used as the key and unique number for items
     public static int NUMITEMS;
@@ -29,6 +36,11 @@ public class Navigation extends AppCompatActivity {
     GameData map;
     AreaInfo ai_frag;
     StatusBar sb_frag;
+
+
+    Activity activity;
+
+
     private Button north, south, east, west, option, restart;
 
     @Override
@@ -133,26 +145,71 @@ public class Navigation extends AppCompatActivity {
             }
         });
 
-        /*
-        option.setOnClickListener(new View.OnClickListener() {
-            public void onClick (View v) {
 
 
-                if(currArea.getType())
-                {
-                    startActivityForResult(Market.getIntent(Navagation.this, mainCharacter, currArea), REQUEST_CODE_MARKET);
-                }
-                else
-                {
 
-                    startActivityForResult(Wilderness.getIntent(Navagation.this, mainCharacter, currArea), REQUEST_CODE_WILDERNESS);
-                }
-
-            }
-        });*/
 
 
     }
+
+    @Override
+    public void editDescription()
+    {
+        //needed something off the stack so that i could set it from an inner class
+        final String[] desc = new String[1];
+        desc[0] = null;
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Navigation.this);
+        //inflate the layout
+        View mView = getLayoutInflater().inflate(R.layout.description_dialog, null);
+
+        final EditText description = (EditText)mView.findViewById(R.id.write);
+        Button save = (Button)mView.findViewById(R.id.save);
+        Button cancel = (Button)mView.findViewById(R.id.cancel);
+
+
+
+        builder.setView(mView);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        cancel.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                    // desc = description.getText().toString();
+                    Toast.makeText(Navigation.this, "Description Canceled", Toast.LENGTH_SHORT).show();
+
+                    dialog.dismiss();
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(!description.getText().toString().isEmpty())
+                {
+                   // desc = description.getText().toString();
+                    Toast.makeText(Navigation.this, "Saved Description", Toast.LENGTH_SHORT).show();
+                    ai_frag.setReturnedDescription(description.getText().toString());
+
+                }
+                else
+                {
+                    Toast.makeText(Navigation.this, "No Description changed", Toast.LENGTH_SHORT).show();
+                }
+                dialog.dismiss();
+
+            }
+        });
+
+
+    }
+
+
+
+
+
 
     public void tellThemYouCantDoThat(String errorMessage)
     {
@@ -238,6 +295,7 @@ public class Navigation extends AppCompatActivity {
         west = (Button)findViewById(R.id.west);
         option = (Button)findViewById(R.id.option);
         restart = (Button)findViewById(R.id.restart);
+
 
 
         //proably will be from the data base, but will be done later on
