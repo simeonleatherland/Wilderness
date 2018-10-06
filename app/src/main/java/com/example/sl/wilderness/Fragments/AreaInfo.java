@@ -27,6 +27,8 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
 
     String returnDescription = null;
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

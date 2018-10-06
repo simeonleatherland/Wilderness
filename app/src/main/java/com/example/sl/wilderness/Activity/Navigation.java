@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sl.wilderness.Database.WildernessDb;
 import com.example.sl.wilderness.Fragments.AreaInfo;
 import com.example.sl.wilderness.Fragments.StatusBar;
 import com.example.sl.wilderness.ModelPack.Area;
@@ -36,9 +37,8 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     GameData map;
     AreaInfo ai_frag;
     StatusBar sb_frag;
+    WildernessDb db;
 
-
-    Activity activity;
 
 
     private Button north, south, east, west, option, restart;
@@ -53,6 +53,9 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+        db = new WildernessDb(Navigation.this);
+
 
         //get the fragment mananger
         FragmentManager fm = getSupportFragmentManager();
@@ -77,7 +80,15 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //get the instance of the map PROBABLY HAVE A METHOD TO GET FROM DATABASE IN FUTURE
         //same for maing character, this is just for testing
         map = GameData.getInstance();
-        mainCharacter = new Player(0, 0, 0,0, 100);
+        mainCharacter = db.getCurrPlayer();
+        if(mainCharacter == null)
+        {
+            mainCharacter = new Player(0, 0, 0,0, 100);
+            db.insertPlayer(mainCharacter);
+        }
+
+        mainCharacter = db.getCurrPlayer();
+
 
         //setup all the buttons for the activity, north, south, east or west
         setupViews();

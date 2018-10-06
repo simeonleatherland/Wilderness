@@ -43,7 +43,7 @@ public class DbSchema {
 
             public static final String DESCRIPTION = "description";
             public static final String TYPE = "item_type"; //equipment or food
-            public static final String TYPEVALUE = "type_value_mass/health";
+            public static final String TYPEVALUE = "type_value_massORhealth";
 
             //is the player currently holding this
             public static final String HELD = "is_help";

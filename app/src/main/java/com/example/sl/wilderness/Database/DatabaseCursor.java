@@ -25,8 +25,9 @@ public class DatabaseCursor extends CursorWrapper {
         int col = getInt(getColumnIndex(PlayerTable.Cols.COL));
         double mass = getDouble(getColumnIndex(PlayerTable.Cols.MASS));
         int health = getInt(getColumnIndex(PlayerTable.Cols.HEALTH));
+        int version = getInt(getColumnIndex(PlayerTable.Cols.ID));
 
-        return new Player(cash, mass, row, col, health);
+        return new Player(cash, mass, row, col, health,version);
     }
 
     public Area getArea()

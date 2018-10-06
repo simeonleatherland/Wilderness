@@ -2,6 +2,7 @@ package com.example.sl.wilderness.ModelPack;
 
 import android.util.Log;
 
+import com.example.sl.wilderness.Activity.Navigation;
 import com.example.sl.wilderness.ModelPack.Equipment;
 
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ public class Player {
     private double health;
     private double equipmentMass;
     private List<Equipment> equipment;
+    public static int VERSION;
 
     public Player(int cash, double equipmentMass, int row, int col, int health)
     {
@@ -47,6 +49,44 @@ public class Player {
             Log.i("BadRowCol", "Please fix row and col as its out of scope");
             throw new IllegalArgumentException("Row and Col are bad");
         }
+        //get the version of the player
+        VERSION = Navigation.getVersion();
+
+    }
+    public Player(int cash, double equipmentMass, int row, int col, int health, int inVersion)
+    {
+        if(cash < 0)
+        {
+            this.cash = cash;
+        }
+        else
+        {
+            this.cash = cash;
+        }
+        if(equipmentMass < 0)
+        {
+            this.equipmentMass = equipmentMass;
+
+        }
+        else
+        {
+            this.equipmentMass = equipmentMass;
+
+        }
+        equipment = new LinkedList<>();
+        this.health = health;
+        if(validateRowCol(row, col))
+        {
+            rowLocation = row;
+            colLocation = col;
+        }
+        else
+        {
+            Log.i("BadRowCol", "Please fix row and col as its out of scope");
+            throw new IllegalArgumentException("Row and Col are bad");
+        }
+        //get the version of the player
+        VERSION = inVersion;
 
     }
 

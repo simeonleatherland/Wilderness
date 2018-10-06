@@ -2,7 +2,9 @@ package com.example.sl.wilderness.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.sl.wilderness.Activity.Navigation;
 import com.example.sl.wilderness.Database.DbHelper;
@@ -12,11 +14,19 @@ import com.example.sl.wilderness.Database.DbSchema.ItemTable;
 import com.example.sl.wilderness.ModelPack.Area;
 import com.example.sl.wilderness.ModelPack.Equipment;
 import com.example.sl.wilderness.ModelPack.Food;
+import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Item;
 import com.example.sl.wilderness.ModelPack.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WildernessDb {
     private SQLiteDatabase db;
+
+    private Player currPlayer;
+    private List<Item> itemsList;
+    private Area[][] grid;
 
     public WildernessDb(Context context)
     {
@@ -47,6 +57,12 @@ public class WildernessDb {
 
         db.insert(PlayerTable.NAME, null, cv);
 
+    }
+
+    public void load()
+    {
+       // grid = new Area[GameData.ROW][GameData.COL];
+        currPlayer = getCurrPlayer();
     }
 
 
@@ -180,5 +196,56 @@ public class WildernessDb {
 
 
         db.update(AreaTable.NAME, cv, AreaTable.Cols.ID + " = " + id, wherevalue);
+    }
+
+    private DatabaseCursor queryPlayerTable(String where, String[] whereArgs)
+    {
+        Cursor cursor = db.query(
+                PlayerTable.NAME,
+                null, //columns, null selects all columsn
+                where,
+                whereArgs,
+                null, //group by
+                null, //having
+                null
+        );
+        return new DatabaseCursor(cursor);
+    }
+
+    public Player getCurrPlayer()
+    {
+        List<Player> p = new ArrayList<>();
+        Player latestPlayer;
+        DatabaseCursor cursor = queryPlayerTable(null,null);
+        try{
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast())
+            {
+                p.add(cursor.getPlayer());
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
+
+        int highestVersionIndex = 0;
+        //iterate and find the most up to date player
+        for(int ii = 0; ii < p.size(); ii++)
+        {
+
+            if(p.get(ii).VERSION > p.get(highestVersionIndex).VERSION)
+            {
+                highestVersionIndex = ii;
+
+            }
+        }
+        try{
+            return p.get(highestVersionIndex);
+        }
+        catch(IndexOutOfBoundsException e)
+        {
+            Log.i("Database access for", "null");
+            return null;
+        }
     }
 }

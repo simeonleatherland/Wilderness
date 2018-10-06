@@ -22,14 +22,13 @@ public class DbHelper extends SQLiteOpenHelper {
     {
         //Creation of the table for area, player and item
         db.execSQL("create table " +  AreaTable.NAME + "(" +
-                    "_id integer primary key autoincrement, " +
+                "_id integer primary key autoincrement, "+
                         AreaTable.Cols.ID + ", " +
                         AreaTable.Cols.ROW + ", " +
                         AreaTable.Cols.COL + ", " +
                         AreaTable.Cols.TOWN + ", " +
                         AreaTable.Cols.STARRED + ", " +
                         AreaTable.Cols.EXPLORED + ") " );
-
 
         db.execSQL("create table " +  PlayerTable.NAME + "(" +
                 "_id integer primary key autoincrement, " +
