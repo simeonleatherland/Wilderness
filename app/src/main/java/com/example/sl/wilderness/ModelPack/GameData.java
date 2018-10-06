@@ -13,6 +13,11 @@ public class GameData {
     public static final int ROW = 3;
     public static final int COL = 3;
 
+
+    public GameData()
+    {
+        grid = new Area[ROW][COL];
+    }
     //static get method
     public static GameData getInstance()
     {

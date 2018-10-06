@@ -15,10 +15,8 @@ import com.example.sl.wilderness.R;
 public class StatusBar extends Fragment {
 
     private TextView health,cash,equipment;
-
-    public StatusBar() {
-        // Required empty public constructor
-    }
+    private int cashinitial;
+    private double healtha, equip;
 
 
     @Override
@@ -36,9 +34,34 @@ public class StatusBar extends Fragment {
         health = (TextView) v.findViewById(R.id.health);
         cash = (TextView) v.findViewById(R.id.cash);
         equipment = (TextView) v.findViewById(R.id.equipmentmass);
+        health.setText("Health: " + healtha);
+        cash.setText("Cash: " + cashinitial);
 
 
         return v;
+    }
+
+
+    //This is to set classfgields to initally set the health cash and mass to the view
+    public void setupInitial(double health, int cash, double equip)
+    {
+        this.healtha = health;
+        this.cashinitial = cash;
+        this.equip = equip;
+    }
+
+
+    public void updateHealth(double inHealth)
+    {
+        health.setText("Health: " + inHealth);
+    }
+    public void updateCash(int inCash)
+    {
+        cash.setText("Cash: " + inCash);
+    }
+    public void updateEquipmentMass(double inEquip)
+    {
+        equipment.setText("Equipment Mass: " + inEquip);
     }
 
 

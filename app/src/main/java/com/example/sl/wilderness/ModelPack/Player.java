@@ -36,7 +36,7 @@ public class Player {
 
         }
         equipment = new LinkedList<>();
-        health = health;
+        this.health = health;
         if(validateRowCol(row, col))
         {
             rowLocation = row;
@@ -96,8 +96,10 @@ public class Player {
     private boolean validateRowCol(int row, int col) {
         return true;
     }
+    //set health checks the change value, this is usally
     public void setHealth(int changeValue)
     {
+
         if(health + changeValue < 0)
         {
             health = 0;
@@ -112,6 +114,32 @@ public class Player {
 
     }
 
+    //calculates the health of the player as it moves, and returns in
+    public double calcHealth()
+    {
+        health = (int)(Math.max(00, health - 5.0 - (equipmentMass / 2.0)));
+        return health;
+    }
+
+    public void setRowLocation(int rowLocation) {
+        this.rowLocation = rowLocation;
+    }
+
+    public void setColLocation(int colLocation) {
+        this.colLocation = colLocation;
+    }
+
+    public void setCash(int cash) {
+        this.cash = cash;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    public void setEquipmentMass(double equipmentMass) {
+        this.equipmentMass = equipmentMass;
+    }
 
     public int getRowLocation() {
         return rowLocation;

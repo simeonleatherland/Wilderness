@@ -3,6 +3,7 @@ package com.example.sl.wilderness.Activity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,6 +15,9 @@ import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Navigation extends AppCompatActivity {
 
     //this is used as the key and unique number for items
@@ -23,39 +27,50 @@ public class Navigation extends AppCompatActivity {
     Area currArea;
     Player mainCharacter;
     GameData map;
-    AreaInfo ai;
-    StatusBar sb;
+    AreaInfo ai_frag;
+    StatusBar sb_frag;
     private Button north, south, east, west, option, restart;
 
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstance)
+    {
+        super.onSaveInstanceState(savedInstance);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
+        //get the fragment mananger
         FragmentManager fm = getSupportFragmentManager();
         //tries to find the fragment by the id of the framelayout in this activity
-        ai = (AreaInfo)fm.findFragmentById(R.id.areanav);
-
-        sb = (StatusBar)fm.findFragmentById(R.id.status);
+        ai_frag = (AreaInfo)fm.findFragmentById(R.id.areanav);
+        //retrieve the fragment for the status bar if it exists
+        sb_frag = (StatusBar)fm.findFragmentById(R.id.statusnav);
 
         //try find the fragment, if it doesnt exist then create it
-        if(ai == null)
+        if(ai_frag == null)
         {
-            ai = new AreaInfo();
-            fm.beginTransaction().add(R.id.areanav, ai).commit();
+            //create the fragment if not exist
+            ai_frag = new AreaInfo();
+            fm.beginTransaction().add(R.id.areanav, ai_frag).commit();
         }
-        if(sb == null)
+        if(sb_frag == null) //same as above
         {
-            sb = new StatusBar();
-            fm.beginTransaction().add(R.id.statusnav , sb).commit();
+            sb_frag = new StatusBar();
+            fm.beginTransaction().add(R.id.statusnav , sb_frag).commit();
         }
 
+        //get the instance of the map PROBABLY HAVE A METHOD TO GET FROM DATABASE IN FUTURE
+        //same for maing character, this is just for testing
         map = GameData.getInstance();
         mainCharacter = new Player(0, 0, 0,0, 100);
 
+        //setup all the buttons for the activity, north, south, east or west
         setupViews();
 
+        //ON CLICK LISTENERS FOR ALL THE BUTTONS ON THE SCREEN
         //allows the user to press and update where they are on the map
         north.setOnClickListener(new View.OnClickListener() {
             public void onClick (View v) {
@@ -68,7 +83,7 @@ public class Navigation extends AppCompatActivity {
                 }
                 catch (IllegalArgumentException e)
                 {
-                    tellThemYouCantDoThat("You cant move there as its outside the map");
+                    tellThemYouCantDoThat("You cant move there as \n its outside the map");
                 }
             }
         });
@@ -83,7 +98,7 @@ public class Navigation extends AppCompatActivity {
                 }
                 catch (IllegalArgumentException e)
                 {
-                    tellThemYouCantDoThat("You cant move there as its outside the map");
+                    tellThemYouCantDoThat("You cant move there as \n its outside the map");
 
                 }
             }
@@ -99,7 +114,7 @@ public class Navigation extends AppCompatActivity {
                 }
                 catch (IllegalArgumentException e)
                 {
-                    tellThemYouCantDoThat("You cant move there as its outside the map");
+                    tellThemYouCantDoThat("You cant move there as \n its outside the map");
                 }
             }
         });
@@ -113,11 +128,12 @@ public class Navigation extends AppCompatActivity {
                 }
                 catch (IllegalArgumentException e)
                 {
-                    tellThemYouCantDoThat("You cant move there as its outside the map");
+                    tellThemYouCantDoThat("You cant move there as \n its outside the map");
                 }
             }
         });
 
+        /*
         option.setOnClickListener(new View.OnClickListener() {
             public void onClick (View v) {
 
@@ -133,36 +149,86 @@ public class Navigation extends AppCompatActivity {
                 }
 
             }
-        });
+        });*/
 
 
     }
 
+    public void tellThemYouCantDoThat(String errorMessage)
+    {
+        ai_frag.displayError(errorMessage);
+    }
+
     public void playerMoves()
     {
+        //update the current row and col of the player
+        currRow = mainCharacter.getRowLocation();
+        currCol = mainCharacter.getColLocation();
 
+        //get the current area object at the users location
+        currArea = map.getArea(currRow, currCol);
+        //make the areainfo fragment responsible for the current area
+        ai_frag.setCurrentArea(currArea);
+
+        //make area info update the area info that its responsible for
+        ai_frag.updateInfo();
+        tellThemYouCantDoThat("");
+
+
+
+        //calculate the health of the player and update the view of it
+        sb_frag.updateHealth(mainCharacter.calcHealth());
+
+        //Codee that restarts the character if their health gets to 0
+        if(Double.compare(mainCharacter.getHealth(), 0.0) == 0)
+        {
+            //restart("You died - RIP - game has restarted");
+        }
+
+    }
+
+    /*
+    private void checkIfTheyWon(Player inMainCharacter)
+    {
+        List<Equipment> copyOfList = inMainCharacter.getEquipment();
+        List<String> listOfItemAsStrings = new LinkedList<>();
+        for(Equipment o : copyOfList)
+        {
+            listOfItemAsStrings.add(o.getDesc());
+        }
+        if(listOfItemAsStrings.contains("Backpack") && listOfItemAsStrings.contains("Knife") && listOfItemAsStrings.contains("Shovel"))
+        {
+            restart("You have WON the game -> the game has now restarted");
+        }
+    }
+
+    */
+/*
+
+    private void restart(String reasonForRestart)
+    {
+        tellThemYouCantDoThat(reasonForRestart);
+        mainCharacter.reset();
+        updateHealth();
+        updateCash();
+        updateEquimentMass();
+        map.restartMap();
+
+        //restarts labels to the origin position of the map
 
         currRow = mainCharacter.getRowLocation();
         currCol = mainCharacter.getColLocation();
 
         currArea = map.getArea(currRow, currCol);
 
-        ai.
-        desc.setText("Description: " ); //+ currArea.getDesc());
+        desc.setText("Description: "); //+ currArea.getDesc());
         currentArea.setText("Current Area: Row" + mainCharacter.getRowLocation()  + " Col" + mainCharacter.getColLocation());
-        type.setText("Type: " + currArea.getType());
-        tellThemYouCantDoThat("");
-        //calculate the health of the player
-        calcHealth();
-        //update the label of the player
-        updateHealth();
-        //CODe that restarts the character if their health gets to 0
-        if(Double.compare(mainCharacter.getHealth(), 0.0) == 0)
-        {
-            restart("You died - RIP - game has restarted");
-        }
+        type.setText("Description: " + currArea.getType());
+
+        //restarts the map details to what it was
 
     }
+*/
 
 
     private void setupViews() {
@@ -174,7 +240,26 @@ public class Navigation extends AppCompatActivity {
         restart = (Button)findViewById(R.id.restart);
 
 
+        //proably will be from the data base, but will be done later on
+        currRow = mainCharacter.getRowLocation();
+        currCol = mainCharacter.getColLocation();
+        //get the current area
+        currArea = map.getArea(currRow, currCol);
 
+        //set the current area
+        ai_frag.setCurrentArea(currArea);
+
+        sb_frag.setupInitial(mainCharacter.getHealth(), mainCharacter.getCash(), mainCharacter.getEquipmentMass());
+        /*
+        ai_frag.updateInfo();
+        //update the user on whats happeneing with the game
+        tellThemYouCantDoThat("Game has started");
+
+        //Update the status bar fragment of their views
+        sb_frag.updateCash(mainCharacter.getCash());
+        sb_frag.updateHealth(mainCharacter.getHealth());
+        sb_frag.updateEquipmentMass(mainCharacter.getEquipmentMass());
+        */
 
     }
 
