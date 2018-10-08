@@ -1,6 +1,6 @@
 package com.example.sl.wilderness.ModelPack;
 
-public class Equipment extends Item {
+public abstract class Equipment extends Item {
     public double getMass() {
         return mass;
     }
@@ -14,4 +14,10 @@ public class Equipment extends Item {
         super(inDesc,inValue, row, col, held);
         mass = inMass;
     }
+
+    public abstract String getType();
+
+
+
+
 }

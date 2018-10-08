@@ -13,6 +13,7 @@ public abstract class Item {
 
     public Item(){
         Navigation.getNewItemID();
+
     }
 
 
@@ -35,6 +36,8 @@ public abstract class Item {
             value = inValue;
         }
     }
+
+    public abstract String getType();
 
     public int getValue(){return value;}
     public String getDescription()

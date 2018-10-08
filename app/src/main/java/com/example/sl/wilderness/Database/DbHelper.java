@@ -55,9 +55,7 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int v1, int v2)
     {
-        if(v2 > v1)
-        {
             db.needUpgrade(v2);
-        }
+
     }
 }

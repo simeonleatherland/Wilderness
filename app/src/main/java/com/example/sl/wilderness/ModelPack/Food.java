@@ -17,4 +17,10 @@ public class Food extends Item {
     {
         return health;
     }
+
+    @Override
+    public String getType()
+    {
+        return "FOOD";
+    }
 }

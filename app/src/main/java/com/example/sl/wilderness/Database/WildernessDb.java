@@ -27,12 +27,12 @@ public class WildernessDb {
     private Player currPlayer;
     private List<Item> itemsList;
     private Area[][] grid;
+    public static int PLAYERVERSION;
 
     public WildernessDb(Context context)
     {
         this.db = new DbHelper(
-                context.getApplicationContext()
-        ).getWritableDatabase();
+                context.getApplicationContext()).getWritableDatabase();
     }
 
     //INSERT
@@ -41,7 +41,7 @@ public class WildernessDb {
         //create the player
         ContentValues cv = new ContentValues();
         //gets and updagtes the player version so when upgrading you can update the correct one
-        cv.put(PlayerTable.Cols.ID, Navigation.getVersion());
+        cv.put(PlayerTable.Cols.ID, p.VERSION);
         cv.put(PlayerTable.Cols.COL, p.getColLocation());
         cv.put(PlayerTable.Cols.ROW, p.getRowLocation());
         cv.put(PlayerTable.Cols.CASH, p.getCash());
@@ -227,25 +227,8 @@ public class WildernessDb {
         } finally {
             cursor.close();
         }
+        PLAYERVERSION = p.get(p.size()-1).VERSION; // this is the current player version number
+        return p.get(p.size()-1);
 
-        int highestVersionIndex = 0;
-        //iterate and find the most up to date player
-        for(int ii = 0; ii < p.size(); ii++)
-        {
-
-            if(p.get(ii).VERSION > p.get(highestVersionIndex).VERSION)
-            {
-                highestVersionIndex = ii;
-
-            }
-        }
-        try{
-            return p.get(highestVersionIndex);
-        }
-        catch(IndexOutOfBoundsException e)
-        {
-            Log.i("Database access for", "null");
-            return null;
-        }
     }
 }

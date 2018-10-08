@@ -47,6 +47,8 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     protected void onSaveInstanceState(Bundle savedInstance)
     {
         super.onSaveInstanceState(savedInstance);
+        db.insertPlayer(mainCharacter);
+
     }
 
     @Override
@@ -54,8 +56,12 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
+        //get and load the database
         db = new WildernessDb(Navigation.this);
-
+        //update the database and the WildernessDB instance with the current player so we can get access to it
+        db.load();
+        //update the current version of the last player so that the static doenst loose touch with the latest each time the activity is ran
+        PLAYERVERSION = db.PLAYERVERSION;
 
         //get the fragment mananger
         FragmentManager fm = getSupportFragmentManager();
@@ -80,19 +86,28 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //get the instance of the map PROBABLY HAVE A METHOD TO GET FROM DATABASE IN FUTURE
         //same for maing character, this is just for testing
         map = GameData.getInstance();
+
         mainCharacter = db.getCurrPlayer();
+
         if(mainCharacter == null)
         {
             mainCharacter = new Player(0, 0, 0,0, 100);
             db.insertPlayer(mainCharacter);
         }
 
-        mainCharacter = db.getCurrPlayer();
-
-
         //setup all the buttons for the activity, north, south, east or west
         setupViews();
 
+        onClickListeners();
+
+
+
+
+
+
+    }
+
+    private void onClickListeners() {
         //ON CLICK LISTENERS FOR ALL THE BUTTONS ON THE SCREEN
         //allows the user to press and update where they are on the map
         north.setOnClickListener(new View.OnClickListener() {
@@ -155,12 +170,6 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
                 }
             }
         });
-
-
-
-
-
-
     }
 
     @Override
@@ -253,6 +262,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             //restart("You died - RIP - game has restarted");
         }
 
+        db.updatePlayer(mainCharacter);
     }
 
     /*
