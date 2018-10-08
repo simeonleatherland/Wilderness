@@ -41,6 +41,7 @@ public class DatabaseCursor extends CursorWrapper {
         return new Area(town,desc,starred,explored,row,col);
     }
 
+    /*
     public Item getItem()
     {
         Item i = null;
@@ -64,5 +65,7 @@ public class DatabaseCursor extends CursorWrapper {
         }
         return i;
     }
+
+    */
 
 }

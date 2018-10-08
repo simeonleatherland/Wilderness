@@ -1,18 +1,12 @@
 package com.example.sl.wilderness.Activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.SharedPreferences;
-import android.nfc.tech.NfcA;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sl.wilderness.Database.WildernessDb;
@@ -23,23 +17,15 @@ import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class Navigation extends AppCompatActivity implements AreaInfo.OnDescriptionClickedListener {
 
     //this is used as the key and unique number for items
     public static int NUMITEMS;
     public static int PLAYERVERSION;
-    int currRow, currCol;
-    Area currArea;
-    Player mainCharacter;
     GameData map;
     AreaInfo ai_frag;
     StatusBar sb_frag;
     WildernessDb db;
-
-
 
     private Button north, south, east, west, option, restart;
 
@@ -47,7 +33,8 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     protected void onSaveInstanceState(Bundle savedInstance)
     {
         super.onSaveInstanceState(savedInstance);
-        db.insertPlayer(mainCharacter);
+        db.insertPlayer(map.getPlayer());
+        db.updateGameGrid(map.getGrid());
 
     }
 
@@ -58,10 +45,11 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
         //get and load the database
         db = new WildernessDb(Navigation.this);
-        //update the database and the WildernessDB instance with the current player so we can get access to it
+        //load the current player into the classifeld in the wilderness database
         db.load();
         //update the current version of the last player so that the static doenst loose touch with the latest each time the activity is ran
         PLAYERVERSION = db.PLAYERVERSION;
+        retrieveGameData();
 
         //get the fragment mananger
         FragmentManager fm = getSupportFragmentManager();
@@ -83,29 +71,42 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             fm.beginTransaction().add(R.id.statusnav , sb_frag).commit();
         }
 
+
+        //setup all the buttons for the activity, north, south, east or west
+        setupViews();
+        onClickListeners();
+
+
+    }
+
+    public void retrieveGameData()
+    {
         //get the instance of the map PROBABLY HAVE A METHOD TO GET FROM DATABASE IN FUTURE
         //same for maing character, this is just for testing
-        map = GameData.getInstance();
 
-        mainCharacter = db.getCurrPlayer();
-
+        Player mainCharacter = db.getCurrPlayer();
         if(mainCharacter == null)
         {
             mainCharacter = new Player(0, 0, 0,0, 100);
             db.insertPlayer(mainCharacter);
         }
-
-        //setup all the buttons for the activity, north, south, east or west
-        setupViews();
-
-        onClickListeners();
-
-
-
-
-
+        Area[][] tempGrid = db.getGrid();
+        if(tempGrid[0][0] == null) //if theres nothing in the grid
+        {
+            //create an instance for the gamedata if it hasnt already been created
+            map = GameData.getInstance();
+            //insert all the areas into the database and each areas items
+            db.insertGameGrid(map.getGrid());
+            map.setPlayer(mainCharacter);
+        }
+        else
+        {
+            //no need to update database since theres no change in stuff
+            map = GameData.getInstanceFromDB(tempGrid, mainCharacter);
+        }
 
     }
+
 
     private void onClickListeners() {
         //ON CLICK LISTENERS FOR ALL THE BUTTONS ON THE SCREEN
@@ -115,7 +116,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
                 try
                 {
-                    mainCharacter.move(-1, 0, map);
+                    map.getPlayer().move(-1, 0, map);
                     playerMoves();
 
                 }
@@ -130,7 +131,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             public void onClick (View v) {
                 try
                 {
-                    mainCharacter.move(1, 0, map);
+                    map.getPlayer().move(1, 0, map);
                     playerMoves();
 
                 }
@@ -146,7 +147,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             public void onClick (View v) {
                 try
                 {
-                    mainCharacter.move(0, 1, map);
+                    map.getPlayer().move(0, 1, map);
                     playerMoves();
 
                 }
@@ -160,7 +161,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             public void onClick (View v) {
                 try
                 {
-                    mainCharacter.move(0, -1, map);
+                    map.getPlayer().move(0, -1, map);
                     playerMoves();
 
                 }
@@ -239,13 +240,12 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     public void playerMoves()
     {
         //update the current row and col of the player
-        currRow = mainCharacter.getRowLocation();
-        currCol = mainCharacter.getColLocation();
+        int currRow = map.getPlayer().getRowLocation();
+        int currCol = map.getPlayer().getColLocation();
 
         //get the current area object at the users location
-        currArea = map.getArea(currRow, currCol);
         //make the areainfo fragment responsible for the current area
-        ai_frag.setCurrentArea(currArea);
+        ai_frag.setCurrentArea(map.getArea(currRow, currCol));
 
         //make area info update the area info that its responsible for
         ai_frag.updateInfo();
@@ -254,15 +254,15 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
 
         //calculate the health of the player and update the view of it
-        sb_frag.updateHealth(mainCharacter.calcHealth());
+        sb_frag.updateHealth(map.getPlayer().calcHealth());
 
         //Codee that restarts the character if their health gets to 0
-        if(Double.compare(mainCharacter.getHealth(), 0.0) == 0)
+        if(Double.compare(map.getPlayer().getHealth(), 0.0) == 0)
         {
             //restart("You died - RIP - game has restarted");
         }
 
-        db.updatePlayer(mainCharacter);
+        db.updatePlayer(map.getPlayer());
     }
 
     /*
@@ -320,15 +320,14 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
 
         //proably will be from the data base, but will be done later on
-        currRow = mainCharacter.getRowLocation();
-        currCol = mainCharacter.getColLocation();
+        int currRow = map.getPlayer().getRowLocation();
+        int currCol = map.getPlayer().getColLocation();
         //get the current area
-        currArea = map.getArea(currRow, currCol);
 
         //set the current area
-        ai_frag.setCurrentArea(currArea);
+        ai_frag.setCurrentArea(map.getArea(currRow, currCol));
 
-        sb_frag.setupInitial(mainCharacter.getHealth(), mainCharacter.getCash(), mainCharacter.getEquipmentMass());
+        sb_frag.setupInitial(map.getPlayer().getHealth(), map.getPlayer().getCash(), map.getPlayer().getEquipmentMass());
         /*
         ai_frag.updateInfo();
         //update the user on whats happeneing with the game

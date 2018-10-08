@@ -23,4 +23,9 @@ public class Food extends Item {
     {
         return "FOOD";
     }
+
+    @Override
+    public double getTypeValue() {
+        return health;
+    }
 }

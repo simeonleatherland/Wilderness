@@ -28,6 +28,7 @@ public class DbHelper extends SQLiteOpenHelper {
                         AreaTable.Cols.COL + ", " +
                         AreaTable.Cols.TOWN + ", " +
                         AreaTable.Cols.STARRED + ", " +
+                        AreaTable.Cols.DESCRIPTION + ", " +
                         AreaTable.Cols.EXPLORED + ") " );
 
         db.execSQL("create table " +  PlayerTable.NAME + "(" +
@@ -37,6 +38,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 PlayerTable.Cols.COL + ", " +
                 PlayerTable.Cols.CASH + ", " +
                 PlayerTable.Cols.HEALTH + ", " +
+
                 PlayerTable.Cols.MASS + ") " );
 
         db.execSQL("create table " +  ItemTable.NAME + "(" +

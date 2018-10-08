@@ -35,7 +35,15 @@ public abstract class Item {
         {
             value = inValue;
         }
+        this.held = held;
+        this.col = inCol;
+        this.row = inRow;
+        Navigation.getNewItemID();
+
     }
+
+    public abstract double getTypeValue(); //this is either the health generation or use of the food or equipment
+
 
     public abstract String getType();
 

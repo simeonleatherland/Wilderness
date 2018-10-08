@@ -4,16 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.example.sl.wilderness.Activity.Navigation;
-import com.example.sl.wilderness.Database.DbHelper;
 import com.example.sl.wilderness.Database.DbSchema.AreaTable;
 import com.example.sl.wilderness.Database.DbSchema.PlayerTable;
 import com.example.sl.wilderness.Database.DbSchema.ItemTable;
 import com.example.sl.wilderness.ModelPack.Area;
-import com.example.sl.wilderness.ModelPack.Equipment;
-import com.example.sl.wilderness.ModelPack.Food;
 import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Item;
 import com.example.sl.wilderness.ModelPack.Player;
@@ -25,9 +21,11 @@ public class WildernessDb {
     private SQLiteDatabase db;
 
     private Player currPlayer;
-    private List<Item> itemsList;
     private Area[][] grid;
     public static int PLAYERVERSION;
+
+    private List<Item> itemsList;
+    public static int ITEMNUM;
 
     public WildernessDb(Context context)
     {
@@ -50,9 +48,14 @@ public class WildernessDb {
 
         //go through the list and update the item in the table with its unique number
         //and say that it is held by the player
-        for(Equipment i : p.getEquipment())
+        for(Item i : p.getEquipment())
         {
-            insertEquipment(i,-1,-1);
+            //set row and col to -1 to show it as being held, not at a position
+            i.setRow(-1);
+            i.setCol(-1);
+            //set it held as well
+            i.setHeld(true);
+            updateItem(i);
         }
 
         db.insert(PlayerTable.NAME, null, cv);
@@ -61,49 +64,35 @@ public class WildernessDb {
 
     public void load()
     {
-       // grid = new Area[GameData.ROW][GameData.COL];
-        currPlayer = getCurrPlayer();
+        grid = new Area[GameData.ROW][GameData.COL];
+        currPlayer = retrievePlayer();
+        grid = getMapGrid();
     }
 
 
-    public void insertEquipment(Equipment i, int row, int col)
+    public void insertItem(Item i)
     {
         //create the player
         ContentValues cv = new ContentValues();
         cv.put(ItemTable.Cols.ID, i.ID);
-        cv.put(ItemTable.Cols.COLinMAP, col);
-        cv.put(ItemTable.Cols.ROWinMAP, row);
+        cv.put(ItemTable.Cols.COLinMAP, i.getCol());
+        cv.put(ItemTable.Cols.ROWinMAP, i.getRow());
         cv.put(ItemTable.Cols.HELD, false);
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
         cv.put(ItemTable.Cols.PRICE, i.getValue());
-
-        cv.put(ItemTable.Cols.TYPE, "equipment");
-        cv.put(ItemTable.Cols.TYPEVALUE, i.getMass());
+        //type is the type of object it is so that i can recreate
+        cv.put(ItemTable.Cols.TYPE, i.getType());
+        cv.put(ItemTable.Cols.TYPEVALUE, i.getTypeValue());
 
         db.insert(ItemTable.NAME, null, cv);
 
     }
-    public void insertFood(Food i, int row, int col)
-    {
-        //create the player
-        ContentValues cv = new ContentValues();
-        cv.put(ItemTable.Cols.ID, i.ID);
-        cv.put(ItemTable.Cols.COLinMAP, col);
-        cv.put(ItemTable.Cols.ROWinMAP, row);
-        cv.put(ItemTable.Cols.HELD, false);
-        cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
-        cv.put(ItemTable.Cols.PRICE, i.getValue());
-        cv.put(ItemTable.Cols.TYPE, "food");
-        cv.put(ItemTable.Cols.TYPEVALUE, i.getHealth());
 
-        db.insert(ItemTable.NAME, null, cv);
-
-    }
 
     public void insertArea(Area a)
     {
         ContentValues cv = new ContentValues();
-        String id = a.getRow() + "," + a.getCol();
+        String id = a.getRow() + "-" + a.getCol();
         cv.put(AreaTable.Cols.ID, id);
         cv.put(AreaTable.Cols.ROW, a.getRow());
         cv.put(AreaTable.Cols.COL, a.getCol());
@@ -130,10 +119,10 @@ public class WildernessDb {
 
     }
 
-    public void removeArea(Area a, int row, int col)
+    public void removeArea(Area a)
     {
         String[] wherevalue = {};
-        String id = row + "," + col;
+        String id = a.getRow() + "," + a.getCol();
         db.delete(AreaTable.NAME, AreaTable.Cols.ID +" = " + id, wherevalue);
 
     }
@@ -155,24 +144,28 @@ public class WildernessDb {
 
         //go through the list and update the item in the table with its unique number
         //and say that it is held by the player
-        for(Equipment i : p.getEquipment())
+        for(Item i : p.getEquipment())
         {
-            insertEquipment(i,-1,-1);
+            //set row and col to -1 to show it as being held, not at a position
+            i.setRow(-1);
+            i.setCol(-1);
+            //set it held as well
+            i.setHeld(true);
+            updateItem(i);
         }
-
         db.update(PlayerTable.NAME, cv, PlayerTable.Cols.ID + " = " + Navigation.getNonUpdatingVersion(), whereValues);
     }
 
 
     //THis method is only called when inserting the player, to which it will
     //upgrade the item in the database ASSUMING IT will be there
-    public void updateItem(Item i, int row, int col)
+    public void updateItem(Item i)
     {
         //NEED TO UPDATE THIS METHOD TO UPGRADE RATHER THAN INSERT
         ContentValues cv = new ContentValues();
         cv.put(ItemTable.Cols.ID, i.ID);
-        cv.put(ItemTable.Cols.COLinMAP, row);
-        cv.put(ItemTable.Cols.ROWinMAP, col);
+        cv.put(ItemTable.Cols.COLinMAP, i.getCol());
+        cv.put(ItemTable.Cols.ROWinMAP, i.getRow());
         cv.put(ItemTable.Cols.HELD, false);
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
         cv.put(ItemTable.Cols.PRICE, i.getValue());
@@ -181,21 +174,21 @@ public class WildernessDb {
 
     }
 
-    public void updateArea(Area a, int row, int col)
+    public void updateArea(Area a)
     {
         ContentValues cv = new ContentValues();
-        String id = row + "," + col;
+        String id = a.getRow() + "-" + a.getCol();
         String[] wherevalue = {};
         cv.put(AreaTable.Cols.ID, id);
-        cv.put(AreaTable.Cols.ROW, row);
-        cv.put(AreaTable.Cols.COL, col);
+        cv.put(AreaTable.Cols.ROW, a.getRow());
+        cv.put(AreaTable.Cols.COL, a.getCol());
         cv.put(AreaTable.Cols.TOWN, a.isTown());
         cv.put(AreaTable.Cols.STARRED, a.isStarred());
         cv.put(AreaTable.Cols.EXPLORED, a.isExplored());
         cv.put(AreaTable.Cols.DESCRIPTION, a.getDescription());
 
 
-        db.update(AreaTable.NAME, cv, AreaTable.Cols.ID + " = " + id, wherevalue);
+        db.update(AreaTable.NAME, cv, AreaTable.Cols.ID + " = " + id , wherevalue);
     }
 
     private DatabaseCursor queryPlayerTable(String where, String[] whereArgs)
@@ -212,10 +205,51 @@ public class WildernessDb {
         return new DatabaseCursor(cursor);
     }
 
-    public Player getCurrPlayer()
+    public void updateGameGrid(Area[][] area)
+    {
+        for(int ii = 0; ii < GameData.ROW; ii++)
+        {
+            for(int jj = 0; jj < GameData.COL; jj++)
+            {
+                //incase the areas are swapped im going to double check and override the updated grid
+                area[ii][jj].setRow(ii);
+                area[ii][jj].setCol(jj);
+                //insert the area into the database
+                updateArea(area[ii][jj]);
+                for(Item i : area[ii][jj].getItems())
+                {
+                    updateItem(i);
+                }
+            }
+        }
+    }
+
+    /* initially inserting the game grid
+        the main difference between this and update is that update will UPDATE the areas and items
+     */
+
+    public void insertGameGrid(Area[][] area)
+    {
+        for(int ii = 0; ii < GameData.ROW; ii++)
+        {
+            for(int jj = 0; jj < GameData.COL; jj++)
+            {
+                //incase the areas are swapped im going to double check and override the updated grid
+                area[ii][jj].setRow(ii);
+                area[ii][jj].setCol(jj);
+                //insert the area into the database
+                insertArea(area[ii][jj]);
+                for(Item i : area[ii][jj].getItems())
+                {
+                    insertItem(i);
+                }
+            }
+        }
+    }
+
+    public Player retrievePlayer()
     {
         List<Player> p = new ArrayList<>();
-        Player latestPlayer;
         DatabaseCursor cursor = queryPlayerTable(null,null);
         try{
             cursor.moveToFirst();
@@ -227,8 +261,56 @@ public class WildernessDb {
         } finally {
             cursor.close();
         }
-        PLAYERVERSION = p.get(p.size()-1).VERSION; // this is the current player version number
-        return p.get(p.size()-1);
+        if(p.size() == 0)
+        {
+            return null;
+        }
+        else
+        {
+            PLAYERVERSION = p.get(p.size()-1).VERSION; // this is the current player version number
+            return p.get(p.size()-1);
+        }
 
+    }
+
+    public Area[][] getMapGrid() {
+        Area[][] grid = new Area[GameData.ROW][GameData.COL];
+        DatabaseCursor cursor = queryAreaTable(null,null);
+        try{
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast())
+            {
+                Area temp = cursor.getArea();
+                grid[temp.getRow()][temp.getCol()] = temp;
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
+        return grid;
+    }
+
+    private DatabaseCursor queryAreaTable(String where, String[] whereArgs)
+    {
+        Cursor cursor = db.query(
+                AreaTable.NAME,
+                null, //columns, null selects all columsn
+                where,
+                whereArgs,
+                null, //group by
+                null, //having
+                null
+        );
+        return new DatabaseCursor(cursor);
+    }
+
+    public Player getCurrPlayer()
+    {
+        return currPlayer;
+    }
+
+    public Area[][] getGrid()
+    {
+        return grid;
     }
 }

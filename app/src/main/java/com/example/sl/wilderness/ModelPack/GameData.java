@@ -1,5 +1,6 @@
 package com.example.sl.wilderness.ModelPack;
 
+import com.example.sl.wilderness.Database.WildernessDb;
 import com.example.sl.wilderness.EquipmentPack.Axe;
 import com.example.sl.wilderness.EquipmentPack.Backpack;
 import com.example.sl.wilderness.EquipmentPack.Compass;
@@ -27,6 +28,14 @@ public class GameData {
     {
         grid = new Area[ROW][COL];
     }
+
+    public GameData(Area[][] areas, Player plauyer)
+    {
+        grid = areas;
+        player = plauyer;
+
+    }
+
     //static get method
     public static GameData getInstance()
     {
@@ -40,7 +49,26 @@ public class GameData {
         return instance;
     }
 
+    //this sets the instance if the game data is
+    public static GameData getInstanceFromDB(Area[][] grid, Player p)
+    {
+        return new GameData(grid, p);
+    }
 
+    public void setPlayer(Player p)
+    {
+        player = p;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Area[][] getGrid() {
+        return grid;
+    }
+
+    //this is only a temp fix
     public void generateMap()
     {
         ArrayList<Item> itemList1 = new ArrayList<>();
@@ -48,6 +76,8 @@ public class GameData {
         itemList1.add(new Backpack("Backpack", 7,4,0,0,false));
         itemList1.add(new Knife("Knife", 7,4,0,0,false));
         Area area1 = new Area(true, itemList1, "some area", false, false, 0,0);
+
+
 
         ArrayList<Item> itemList2 = new ArrayList<>();
         itemList2.add(new Food("Watermelon", 2,5,0,1,false));
@@ -99,6 +129,7 @@ public class GameData {
         grid[2][0]= area7;
         grid[2][1]= area8;
         grid[2][2]= area9;
+
     }
 
     public Area getArea(int row, int col)

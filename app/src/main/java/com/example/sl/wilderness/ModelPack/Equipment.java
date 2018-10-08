@@ -17,7 +17,10 @@ public abstract class Equipment extends Item {
 
     public abstract String getType();
 
-
+    @Override
+    public double getTypeValue() {
+        return mass;
+    }
 
 
 }

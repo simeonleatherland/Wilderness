@@ -1,5 +1,8 @@
 package com.example.sl.wilderness.Fragments;
 
+
+
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.example.sl.wilderness.Activity.Navigation;
 import com.example.sl.wilderness.ModelPack.Area;
 import com.example.sl.wilderness.R;
 
