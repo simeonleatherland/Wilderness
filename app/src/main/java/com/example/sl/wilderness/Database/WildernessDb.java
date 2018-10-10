@@ -92,7 +92,7 @@ public class WildernessDb {
     public void insertArea(Area a)
     {
         ContentValues cv = new ContentValues();
-        String id = a.getRow() + "-" + a.getCol();
+        String id = ((a.getRow()* 100) + a.getCol())+ "";
         cv.put(AreaTable.Cols.ID, id);
         cv.put(AreaTable.Cols.ROW, a.getRow());
         cv.put(AreaTable.Cols.COL, a.getCol());
@@ -171,14 +171,13 @@ public class WildernessDb {
         cv.put(ItemTable.Cols.PRICE, i.getValue());
         String[] whereValue = {};
         db.update(ItemTable.NAME,cv, ItemTable.Cols.ID +" = " + i.ID, whereValue);
-
     }
 
     public void updateArea(Area a)
     {
         ContentValues cv = new ContentValues();
-        String id = a.getRow() + "-" + a.getCol();
-        String[] wherevalue = {};
+        String id = ((a.getRow()* 100) + a.getCol())+ "";
+        String[] wherevalue = {id};
         cv.put(AreaTable.Cols.ID, id);
         cv.put(AreaTable.Cols.ROW, a.getRow());
         cv.put(AreaTable.Cols.COL, a.getCol());
@@ -188,7 +187,7 @@ public class WildernessDb {
         cv.put(AreaTable.Cols.DESCRIPTION, a.getDescription());
 
 
-        db.update(AreaTable.NAME, cv, AreaTable.Cols.ID + " = " + id , wherevalue);
+        db.update(AreaTable.NAME, cv, AreaTable.Cols.ID + " = ?" , wherevalue);
     }
 
     private DatabaseCursor queryPlayerTable(String where, String[] whereArgs)

@@ -126,7 +126,7 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
                     currentArea.setStarred();
                 }
                 checkBox.setChecked(currentArea.isStarred());
-
+                ((OnDescriptionClickedListener) activity).updateAreaInDB(currentArea);
                 break;
             case R.id.desc:
                 try
@@ -146,12 +146,15 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
         this.returnDescription = returnDesc;
         this.desc.setText("Description: " + returnDesc);
         currentArea.setDescription(returnDesc);
+        ((OnDescriptionClickedListener) activity).updateAreaInDB(currentArea);
+
     }
 
 
     //INTERFACE SO THAT ACTIVITYT AND FRAGMENT CAN COMMUNICATE
     public interface OnDescriptionClickedListener {
         public void editDescription();
+        public void updateAreaInDB(Area area);
     }
 
 

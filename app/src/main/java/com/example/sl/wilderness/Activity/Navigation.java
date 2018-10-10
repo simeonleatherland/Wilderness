@@ -341,6 +341,13 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
     }
 
+    @Override
+    public void updateAreaInDB(Area area)
+    {
+        db.updateArea(area);
+    }
+
+
 
     public static int getVersion(){
         PLAYERVERSION ++;
