@@ -264,7 +264,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //Codee that restarts the character if their health gets to 0
         if(Double.compare(map.getPlayer().getHealth(), 0.0) == 0)
         {
-            //restart("You died - RIP - game has restarted");
+            restartGame("YOU DIED - GAME RESTARTING");
         }
 
         db.updatePlayer(map.getPlayer());
@@ -337,7 +337,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
 
     @Override
-    public void restartGame()
+    public void restartGame(String text)
     {
         if(db.clearDatabase())
         {
@@ -363,7 +363,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             sb_frag.updateEquipmentMass(map.getPlayer().getEquipmentMass());
             //reset area data in the AREA FRAG\
             resetAreaFragData();
-            Toast.makeText(this, "GAME RESET", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 
         }
 

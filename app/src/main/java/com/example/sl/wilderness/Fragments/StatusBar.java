@@ -78,7 +78,7 @@ public class StatusBar extends Fragment implements View.OnClickListener{
         switch(view.getId())
         {
             case R.id.restart:
-                ((StatusBarObserver)activity).restartGame();
+                ((StatusBarObserver)activity).restartGame("GAME RESTARTING");
                 break;
         }
     }
@@ -86,7 +86,7 @@ public class StatusBar extends Fragment implements View.OnClickListener{
     //This interface allows whoever has the fragment to override this method in the interface
     public interface StatusBarObserver
     {
-        void restartGame();
+        void restartGame(String text);
     }
 
 
