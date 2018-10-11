@@ -79,8 +79,6 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //setup all the buttons for the activity, north, south, east or west
         setupViews();
         onClickListeners();
-
-
     }
 
     public void retrieveGameData()

@@ -33,7 +33,6 @@ public class GameData {
     {
         grid = areas;
         player = plauyer;
-
     }
 
     //static get method
