@@ -18,10 +18,8 @@ import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
-public class Navigation extends AppCompatActivity implements AreaInfo.OnDescriptionClickedListener, StatusBar.StatusBarObserver{
+public class Navigation extends AppCompatActivity implements AreaInfo.OnDescriptionClickedListener, StatusBar.StatusBarObserver {
 
-    //this is used as the key and unique number for items
-    public static int NUMITEMS;
     public static int PLAYERVERSION;
     GameData map;
     AreaInfo ai_frag;
@@ -31,8 +29,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     private Button north, south, east, west, option, restart;
 
     @Override
-    protected void onSaveInstanceState(Bundle savedInstance)
-    {
+    protected void onSaveInstanceState(Bundle savedInstance) {
         super.onSaveInstanceState(savedInstance);
         db.insertPlayer(map.getPlayer());
         db.updateGameGrid(map.getGrid());
@@ -58,21 +55,20 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //get the fragment mananger
         FragmentManager fm = getSupportFragmentManager();
         //tries to find the fragment by the id of the framelayout in this activity
-        ai_frag = (AreaInfo)fm.findFragmentById(R.id.areanav);
+        ai_frag = (AreaInfo) fm.findFragmentById(R.id.areanav);
         //retrieve the fragment for the status bar if it exists
-        sb_frag = (StatusBar)fm.findFragmentById(R.id.statusnav);
+        sb_frag = (StatusBar) fm.findFragmentById(R.id.statusnav);
 
         //try find the fragment, if it doesnt exist then create it
-        if(ai_frag == null)
-        {
+        if (ai_frag == null) {
             //create the fragment if not exist
             ai_frag = new AreaInfo();
             fm.beginTransaction().add(R.id.areanav, ai_frag).commit();
         }
-        if(sb_frag == null) //same as above
+        if (sb_frag == null) //same as above
         {
             sb_frag = new StatusBar();
-            fm.beginTransaction().add(R.id.statusnav , sb_frag).commit();
+            fm.beginTransaction().add(R.id.statusnav, sb_frag).commit();
         }
 
 
@@ -81,32 +77,27 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         onClickListeners();
     }
 
-    public void retrieveGameData()
-    {
+    public void retrieveGameData() {
         //get the instance of the map PROBABLY HAVE A METHOD TO GET FROM DATABASE IN FUTURE
         //same for maing character, this is just for testing
         Player mainCharacter = db.getCurrPlayer();
-        if(mainCharacter == null)
-        {
-            mainCharacter = new Player(0, 0, 0,0, 100);
+        if (mainCharacter == null) {
+            mainCharacter = new Player(0, 0, 0, 0, 100);
             db.insertPlayer(mainCharacter);
         }
         //retrive the grid from the map
         Area[][] tempGrid = db.getGrid();
-        if(tempGrid[0][0] == null) //if theres nothing in the grid
+        if (tempGrid[0][0] == null) //if theres nothing in the grid
         {
             //create an instance for the gamedata if it hasnt already been created
             map = GameData.getInstance();
             //insert all the areas into the database and each areas items, from the newly generated map
             db.insertGameGrid(map.getGrid());
             map.setPlayer(mainCharacter);
+        } else {
+            //no need to update database since theres no change in stuff, update the count of how many items have been created
+            map = GameData.getInstanceFromDB(tempGrid, mainCharacter, db.NUMITEMSID);
         }
-        else
-        {
-            //no need to update database since theres no change in stuff
-            map = GameData.getInstanceFromDB(tempGrid, mainCharacter);
-        }
-
     }
 
 
@@ -114,31 +105,25 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //ON CLICK LISTENERS FOR ALL THE BUTTONS ON THE SCREEN
         //allows the user to press and update where they are on the map
         north.setOnClickListener(new View.OnClickListener() {
-            public void onClick (View v) {
+            public void onClick(View v) {
 
-                try
-                {
+                try {
                     map.getPlayer().move(-1, 0, map);
                     playerMoves();
 
-                }
-                catch (IllegalArgumentException e)
-                {
+                } catch (IllegalArgumentException e) {
                     tellThemYouCantDoThat("You cant move there as \n its outside the map");
                 }
             }
         });
 
         south.setOnClickListener(new View.OnClickListener() {
-            public void onClick (View v) {
-                try
-                {
+            public void onClick(View v) {
+                try {
                     map.getPlayer().move(1, 0, map);
                     playerMoves();
 
-                }
-                catch (IllegalArgumentException e)
-                {
+                } catch (IllegalArgumentException e) {
                     tellThemYouCantDoThat("You cant move there as \n its outside the map");
 
                 }
@@ -146,39 +131,42 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         });
 
         east.setOnClickListener(new View.OnClickListener() {
-            public void onClick (View v) {
-                try
-                {
+            public void onClick(View v) {
+                try {
                     map.getPlayer().move(0, 1, map);
                     playerMoves();
 
-                }
-                catch (IllegalArgumentException e)
-                {
+                } catch (IllegalArgumentException e) {
                     tellThemYouCantDoThat("You cant move there as \n its outside the map");
                 }
             }
         });
         west.setOnClickListener(new View.OnClickListener() {
-            public void onClick (View v) {
-                try
-                {
+            public void onClick(View v) {
+                try {
                     map.getPlayer().move(0, -1, map);
                     playerMoves();
 
-                }
-                catch (IllegalArgumentException e)
-                {
+                } catch (IllegalArgumentException e) {
                     tellThemYouCantDoThat("You cant move there as \n its outside the map");
                 }
             }
         });
+        option.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (ai_frag.getCurrentArea().isTown()) {
+                    startActivity(Market.getIntent(Navigation.this));
+                    //startActivityForResult(Market.getIntent(Navagation.this, mainCharacter, currArea), REQUEST_CODE_MARKET);
+                } else {
 
+                    //  startActivityForResult(Wilderness.getIntent(Navagation.this, mainCharacter, currArea), REQUEST_CODE_WILDERNESS);
+                }
+            }
+        });
     }
 
     @Override
-    public void editDescription()
-    {
+    public void editDescription() {
         //needed something off the stack so that i could set it from an inner class
         final String[] desc = new String[1];
         desc[0] = null;
@@ -188,38 +176,34 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //inflate the layout
         View mView = getLayoutInflater().inflate(R.layout.description_dialog, null);
 
-        final EditText description = (EditText)mView.findViewById(R.id.write);
-        Button save = (Button)mView.findViewById(R.id.save);
-        Button cancel = (Button)mView.findViewById(R.id.cancel);
-
+        final EditText description = (EditText) mView.findViewById(R.id.write);
+        Button save = (Button) mView.findViewById(R.id.save);
+        Button cancel = (Button) mView.findViewById(R.id.cancel);
 
 
         builder.setView(mView);
         final AlertDialog dialog = builder.create();
         dialog.show();
 
-        cancel.setOnClickListener(new View.OnClickListener(){
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    // desc = description.getText().toString();
-                    Toast.makeText(Navigation.this, "Description Canceled", Toast.LENGTH_SHORT).show();
+                // desc = description.getText().toString();
+                Toast.makeText(Navigation.this, "Description Canceled", Toast.LENGTH_SHORT).show();
 
-                    dialog.dismiss();
+                dialog.dismiss();
             }
         });
 
-        save.setOnClickListener(new View.OnClickListener(){
+        save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!description.getText().toString().isEmpty())
-                {
-                   // desc = description.getText().toString();
+                if (!description.getText().toString().isEmpty()) {
+                    // desc = description.getText().toString();
                     Toast.makeText(Navigation.this, "Saved Description", Toast.LENGTH_SHORT).show();
                     ai_frag.setReturnedDescription(description.getText().toString());
 
-                }
-                else
-                {
+                } else {
                     Toast.makeText(Navigation.this, "No Description changed", Toast.LENGTH_SHORT).show();
                 }
                 dialog.dismiss();
@@ -231,17 +215,11 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     }
 
 
-
-
-
-
-    public void tellThemYouCantDoThat(String errorMessage)
-    {
+    public void tellThemYouCantDoThat(String errorMessage) {
         ai_frag.displayError(errorMessage);
     }
 
-    public void playerMoves()
-    {
+    public void playerMoves() {
         //update the current row and col of the player
         int currRow = map.getPlayer().getRowLocation();
         int currCol = map.getPlayer().getColLocation();
@@ -255,21 +233,18 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         tellThemYouCantDoThat("");
 
 
-
         //calculate the health of the player and update the view of it
         sb_frag.updateHealth(map.getPlayer().calcHealth());
 
         //Codee that restarts the character if their health gets to 0
-        if(Double.compare(map.getPlayer().getHealth(), 0.0) == 0)
-        {
+        if (Double.compare(map.getPlayer().getHealth(), 0.0) == 0) {
             restartGame("YOU DIED - GAME RESTARTING");
         }
 
         db.updatePlayer(map.getPlayer());
     }
 
-    public void resetAreaFragData()
-    {
+    public void resetAreaFragData() {
         //update the current row and col of the player
         int currRow = map.getPlayer().getRowLocation();
         int currCol = map.getPlayer().getColLocation();
@@ -303,15 +278,13 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     */
 
 
-
     private void setupViews() {
-        north = (Button)findViewById(R.id.north);
-        south = (Button)findViewById(R.id.south);
-        east = (Button)findViewById(R.id.east);
-        west = (Button)findViewById(R.id.west);
-        option = (Button)findViewById(R.id.option);
-        restart = (Button)findViewById(R.id.restart);
-
+        north = (Button) findViewById(R.id.north);
+        south = (Button) findViewById(R.id.south);
+        east = (Button) findViewById(R.id.east);
+        west = (Button) findViewById(R.id.west);
+        option = (Button) findViewById(R.id.option);
+        restart = (Button) findViewById(R.id.restart);
 
 
         //proably will be from the data base, but will be done later on
@@ -328,17 +301,14 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     }
 
     @Override
-    public void updateAreaInDB(Area area)
-    {
+    public void updateAreaInDB(Area area) {
         db.updateArea(area);
     }
 
 
     @Override
-    public void restartGame(String text)
-    {
-        if(db.clearDatabase())
-        {
+    public void restartGame(String text) {
+        if (db.clearDatabase()) {
 
             //create a new database
             db = new WildernessDb(Navigation.this);
@@ -353,7 +323,6 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
             //reset the player version and num items since database is 0
             PLAYERVERSION = 0;
-            NUMITEMS = 0;
             //reset the map data and the player in the STATUS BAR FRAG
             //update the UI with the new reseted values
             sb_frag.updateHealth(map.getPlayer().getHealth());
@@ -369,15 +338,12 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     }
 
 
-
-    public static int getVersion(){
-        PLAYERVERSION ++;
+    public static int getVersion() {
+        PLAYERVERSION++;
         return PLAYERVERSION;
     }
-    public static int getNonUpdatingVersion(){return PLAYERVERSION;}
-    public static int getNewItemID()
-    {
-        NUMITEMS++;
-        return NUMITEMS;
+
+    public static int getNonUpdatingVersion() {
+        return PLAYERVERSION;
     }
 }

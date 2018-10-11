@@ -10,6 +10,7 @@ import com.example.sl.wilderness.Database.DbSchema.AreaTable;
 import com.example.sl.wilderness.Database.DbSchema.PlayerTable;
 import com.example.sl.wilderness.Database.DbSchema.ItemTable;
 import com.example.sl.wilderness.ModelPack.Area;
+import com.example.sl.wilderness.ModelPack.Equipment;
 import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Item;
 import com.example.sl.wilderness.ModelPack.Player;
@@ -23,10 +24,12 @@ public class WildernessDb {
     private Player currPlayer;
     private Area[][] grid;
     public static int PLAYERVERSION;
+    public static int NUMITEMSID;
+
     Context c;
 
     private List<Item> itemsList;
-    public static int ITEMNUM;
+    private List<Equipment> heldList;
 
     public WildernessDb(Context context)
     {
@@ -34,6 +37,9 @@ public class WildernessDb {
         this.db = new DbHelper(
                 context.getApplicationContext()).getWritableDatabase();
     }
+
+
+
 
     //INSERT
     public void insertPlayer(Player p)
@@ -57,18 +63,39 @@ public class WildernessDb {
             i.setCol(-1);
             //set it held as well
             i.setHeld(true);
-            updateItem(i);
+            insertItem(i);
         }
-
         db.insert(PlayerTable.NAME, null, cv);
-
     }
 
     public void load()
     {
         grid = new Area[GameData.ROW][GameData.COL];
         currPlayer = retrievePlayer();
+        //calculate the highest ID number thats been created so that you dont override items
+        //also allows you to update the items specifically
+        NUMITEMSID = retrieveItems();
+        if(heldList == null)
+        {
+            currPlayer.setEquipment(heldList);
+        }
+
+
         grid = getMapGrid();
+        if(grid[0][0] == null)
+        {
+            sortItemsToAreas(grid, itemsList);
+        }
+    }
+
+    private void sortItemsToAreas(Area[][] grid, List<Item> itemsList) {
+        for(Item i : itemsList)
+        {
+            if(i.getRow() != -1 && i.getCol() !=-1) //if theyre both not held, somehow made it through
+            {
+                grid[i.getRow()][i.getCol()].insertItem(i); //insert into the grids area list
+            }
+        }
     }
 
 
@@ -76,7 +103,7 @@ public class WildernessDb {
     {
         //create the player
         ContentValues cv = new ContentValues();
-        cv.put(ItemTable.Cols.ID, i.ID);
+        cv.put(ItemTable.Cols.ID,i.ID);
         cv.put(ItemTable.Cols.COLinMAP, i.getCol());
         cv.put(ItemTable.Cols.ROWinMAP, i.getRow());
         cv.put(ItemTable.Cols.HELD, false);
@@ -102,6 +129,13 @@ public class WildernessDb {
         cv.put(AreaTable.Cols.STARRED, a.isStarred());
         cv.put(AreaTable.Cols.EXPLORED, a.isExplored());
         cv.put(AreaTable.Cols.DESCRIPTION, a.getDescription());
+        for(Item i : a.getItems())
+        {
+            i.setRow(a.getRow());
+            i.setCol(a.getCol());
+            i.setHeld(false);
+            insertItem(i);
+        }
         db.insert(AreaTable.NAME, null, cv);
     }
 
@@ -171,8 +205,8 @@ public class WildernessDb {
         cv.put(ItemTable.Cols.HELD, false);
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
         cv.put(ItemTable.Cols.PRICE, i.getValue());
-        String[] whereValue = {};
-        db.update(ItemTable.NAME,cv, ItemTable.Cols.ID +" = " + i.ID, whereValue);
+        String[] whereValue = {i.ID + ""};
+        db.update(ItemTable.NAME,cv, ItemTable.Cols.ID +" = ?", whereValue);
     }
 
     public void updateArea(Area a)
@@ -187,7 +221,13 @@ public class WildernessDb {
         cv.put(AreaTable.Cols.STARRED, a.isStarred());
         cv.put(AreaTable.Cols.EXPLORED, a.isExplored());
         cv.put(AreaTable.Cols.DESCRIPTION, a.getDescription());
-
+        for(Item i : a.getItems())
+        {
+            i.setRow(a.getRow());
+            i.setCol(a.getCol());
+            i.setHeld(false);
+            updateItem(i);
+        }
 
         db.update(AreaTable.NAME, cv, AreaTable.Cols.ID + " = ?" , wherevalue);
     }
@@ -196,6 +236,19 @@ public class WildernessDb {
     {
         Cursor cursor = db.query(
                 PlayerTable.NAME,
+                null, //columns, null selects all columsn
+                where,
+                whereArgs,
+                null, //group by
+                null, //having
+                null
+        );
+        return new DatabaseCursor(cursor);
+    }
+    private DatabaseCursor queryItemTable(String where, String[] whereArgs)
+    {
+        Cursor cursor = db.query(
+                ItemTable.NAME,
                 null, //columns, null selects all columsn
                 where,
                 whereArgs,
@@ -219,6 +272,9 @@ public class WildernessDb {
                 updateArea(area[ii][jj]);
                 for(Item i : area[ii][jj].getItems())
                 {
+                    i.setRow(ii);
+                    i.setCol(jj);
+                    i.setHeld(false);
                     updateItem(i);
                 }
             }
@@ -242,6 +298,9 @@ public class WildernessDb {
                 insertArea(area[ii][jj]);
                 for(Item i : area[ii][jj].getItems())
                 {
+                    i.setRow(ii);
+                    i.setCol(jj);
+                    i.setHeld(false);
                     insertItem(i);
                 }
             }
@@ -273,6 +332,54 @@ public class WildernessDb {
         }
 
     }
+
+    public int retrieveItems()
+    {
+        List<Equipment> held = new ArrayList<>();
+        List<Item> inArea = new ArrayList<>();
+        DatabaseCursor cursor = queryItemTable(null,null);
+        try{
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast())
+            {
+                Item i = cursor.getEquipment();
+                if(i != null)
+                {
+                    if(i.getHeld())
+                    {
+                        held.add((Equipment)i);
+                    }
+                    else
+                    {
+                        inArea.add(i);
+                    }
+                }
+                cursor.moveToNext();
+
+            }
+        } finally {
+            cursor.close();
+        }
+        itemsList = inArea;
+        heldList = held;
+        int maxNum = 0;
+        for(Item i : held)
+        {
+            if(i.ID > maxNum)
+            {
+                maxNum = i.ID;
+            }
+        }
+        for(Item i : inArea)
+        {
+            if(i.ID > maxNum)
+            {
+                maxNum = i.ID;
+            }
+        }
+        return maxNum;
+    }
+
 
     public Area[][] getMapGrid() {
         Area[][] grid = new Area[GameData.ROW][GameData.COL];

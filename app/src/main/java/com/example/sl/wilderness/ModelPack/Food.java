@@ -4,9 +4,9 @@ public class Food extends Item {
     private double health;
 
     //this is used to rebuild
-    public Food(String inDesc, int inValue, double inHealth, int row, int col, boolean held)
+    public Food(String inDesc, int inValue, double inHealth, int row, int col, boolean held, int id)
     {
-        super(inDesc,inValue, row, col, held);
+        super(inDesc,inValue, row, col, held, id);
         //i dont validate this as i assume that the health can be poisonous and reduce health for
         //some possible reason
         health = inHealth;

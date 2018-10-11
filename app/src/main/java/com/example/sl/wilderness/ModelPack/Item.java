@@ -11,13 +11,8 @@ public abstract class Item {
     private int col;
     public static int ID;
 
-    public Item(){
-        Navigation.getNewItemID();
 
-    }
-
-
-    public Item(String inDesc, int inValue, int inRow, int inCol, boolean held)
+    public Item(String inDesc, int inValue, int inRow, int inCol, boolean held, int id)
     {
         if(inDesc == null)
         {
@@ -38,8 +33,7 @@ public abstract class Item {
         this.held = held;
         this.col = inCol;
         this.row = inRow;
-        Navigation.getNewItemID();
-
+        ID = id;
     }
 
     public abstract double getTypeValue(); //this is either the health generation or use of the food or equipment

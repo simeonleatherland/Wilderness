@@ -26,6 +26,10 @@ public class Area {
             items = list;
 
         }
+        else
+        {
+            items = new LinkedList<>();
+        }
     }
 
     public Area(boolean isTown, String description, boolean starred, boolean explored, int row, int col) {

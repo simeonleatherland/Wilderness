@@ -161,6 +161,10 @@ public class Player {
         return health;
     }
 
+    public void setEquipment(List<Equipment> equipment) {
+        this.equipment = equipment;
+    }
+
     public void setRowLocation(int rowLocation) {
         this.rowLocation = rowLocation;
     }

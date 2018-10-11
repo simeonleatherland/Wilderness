@@ -3,6 +3,20 @@ package com.example.sl.wilderness.Database;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
+import com.example.sl.wilderness.EquipmentPack.Axe;
+import com.example.sl.wilderness.EquipmentPack.Backpack;
+import com.example.sl.wilderness.EquipmentPack.BenKenobi;
+import com.example.sl.wilderness.EquipmentPack.Compass;
+import com.example.sl.wilderness.EquipmentPack.Gun;
+import com.example.sl.wilderness.EquipmentPack.IceScraper;
+import com.example.sl.wilderness.EquipmentPack.ImprobabilityDrive;
+import com.example.sl.wilderness.EquipmentPack.JadeMonkey;
+import com.example.sl.wilderness.EquipmentPack.Knife;
+import com.example.sl.wilderness.EquipmentPack.PortaSmell;
+import com.example.sl.wilderness.EquipmentPack.Roadmap;
+import com.example.sl.wilderness.EquipmentPack.Shovel;
+import com.example.sl.wilderness.EquipmentPack.Torch;
+import com.example.sl.wilderness.EquipmentPack.Waterbottle;
 import com.example.sl.wilderness.ModelPack.Area;
 import com.example.sl.wilderness.ModelPack.Equipment;
 import com.example.sl.wilderness.ModelPack.Food;
@@ -41,12 +55,12 @@ public class DatabaseCursor extends CursorWrapper {
         return new Area(town,desc,starred,explored,row,col);
     }
 
-    /*
-    public Item getItem()
-    {
-        Item i = null;
-        int value = getInt(getColumnIndex(ItemTable.Cols.PRICE));
 
+    public Equipment getEquipment()
+    {
+        Equipment i = null;
+        int value = getInt(getColumnIndex(ItemTable.Cols.PRICE));
+        int id = getInt(getColumnIndex(ItemTable.Cols.ID));
         String desc = getString(getColumnIndex(ItemTable.Cols.DESCRIPTION));
         String type = getString(getColumnIndex(ItemTable.Cols.TYPE));
         int typevalue = getInt(getColumnIndex(ItemTable.Cols.TYPEVALUE));
@@ -55,17 +69,67 @@ public class DatabaseCursor extends CursorWrapper {
         int row = getInt(getColumnIndex(ItemTable.Cols.ROWinMAP));
         int col = getInt(getColumnIndex(ItemTable.Cols.COLinMAP));
 
-        if(type.equals("equipment"))
+        if(type.equals(Axe.TYPE))
         {
-            i = new Equipment(desc, value, typevalue, row, col, held);
+            i = new Axe(desc, value, typevalue, row, col, held,id);
         }
-        else if(type.equals("food"))
+        else if(type.equals(Backpack.TYPE))
         {
-            i = new Food(desc, value, typevalue, row, col, held);
+            i = new Backpack(desc, value, typevalue, row, col, held,id);
         }
+        else if(type.equals(BenKenobi.TYPE))
+        {
+            i = new BenKenobi(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(Compass.TYPE))
+        {
+            i = new Compass(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(Gun.TYPE))
+        {
+            i = new Gun(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(IceScraper.TYPE))
+        {
+            i = new IceScraper(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(ImprobabilityDrive.TYPE))
+        {
+            i = new ImprobabilityDrive(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(JadeMonkey.TYPE))
+        {
+            i = new JadeMonkey(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(Knife.TYPE))
+        {
+            i = new Knife(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(PortaSmell.TYPE))
+        {
+            i = new PortaSmell(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(Roadmap.TYPE))
+        {
+            i = new Roadmap(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(Shovel.TYPE))
+        {
+            i = new Shovel(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(Torch.TYPE))
+        {
+            i = new Torch(desc, value, typevalue, row, col, held,id);
+        }
+        else if(type.equals(Waterbottle.TYPE))
+        {
+            i = new Waterbottle(desc, value, typevalue, row, col, held,id);
+        }
+
+
         return i;
     }
 
-    */
+
 
 }

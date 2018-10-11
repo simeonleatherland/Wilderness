@@ -1,6 +1,8 @@
 package com.example.sl.wilderness.Activity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +16,11 @@ import android.widget.TextView;
 
 import com.example.sl.wilderness.Database.WildernessDb;
 import com.example.sl.wilderness.Fragments.StatusBar;
+import com.example.sl.wilderness.ModelPack.Area;
+import com.example.sl.wilderness.ModelPack.Equipment;
+import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Item;
+import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
 
@@ -29,11 +35,15 @@ public class Market extends AppCompatActivity {
     private SellAdapter sellAdapter;
     private BuyAdapter buyAdapter;
 
+    private GameData mapInstance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market);
+
+        mapInstance = GameData.getInstance();
 
         //get and load the database
         FragmentManager fm = getSupportFragmentManager();
@@ -45,22 +55,26 @@ public class Market extends AppCompatActivity {
             fm.beginTransaction().add(R.id.statusmarket, sb_frag).commit();
         }
 
-        createRecyclerView();
-        
+        Player currentPlayer = mapInstance.getPlayer();
+        int row = currentPlayer.getRowLocation();
+        int col = currentPlayer.getColLocation();
+        Area currArea = mapInstance.getArea(row, col);
+        createRecyclerView(currentPlayer.getEquipment(), currArea.getItems());
+
 
 
     }
 
 
-    private void createRecyclerView() {
+    private void createRecyclerView(List<Equipment> playerItems, List<Item> areaItems) {
         buyRecyclerView = (RecyclerView) findViewById(R.id.buyrv);
         buyRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL, false));
 
         sellRecyclerView = (RecyclerView) findViewById(R.id.sellrv);
         sellRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL, false));
 
-        //sellAdapter = new SellAdapter();
-        //buyAdapter = new BuyAdapter();
+        sellAdapter = new SellAdapter(Market.this, playerItems);
+        buyAdapter = new BuyAdapter(Market.this, areaItems);
         buyRecyclerView.setAdapter(buyAdapter);
         sellRecyclerView.setAdapter(sellAdapter);
     }
@@ -101,10 +115,10 @@ public class Market extends AppCompatActivity {
     }
     private class SellAdapter extends RecyclerView.Adapter<SellHolder>
     {
-        private List<Item> data;
+        private List<Equipment> data;
         private Activity activity;
         //SOME DATA HERE
-        public SellAdapter(Activity activity, List<Item> data)
+        public SellAdapter(Activity activity, List<Equipment> data)
         {
             this.activity = activity;
             this.data = data;
@@ -184,4 +198,10 @@ public class Market extends AppCompatActivity {
 
         }
     }
-}
+
+    public static Intent getIntent(Context c)
+    {
+        Intent intent = new Intent(c, Market.class);
+        return intent;
+
+    }}

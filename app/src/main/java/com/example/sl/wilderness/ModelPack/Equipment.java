@@ -7,11 +7,10 @@ public abstract class Equipment extends Item {
 
     private double mass;
 
-    public Equipment(){}
 
-    public Equipment(String inDesc, int inValue, double inMass, int row, int col, boolean held)
+    public Equipment(String inDesc, int inValue, double inMass, int row, int col, boolean held, int id)
     {
-        super(inDesc,inValue, row, col, held);
+        super(inDesc,inValue, row, col, held,id);
         mass = inMass;
     }
 
