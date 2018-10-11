@@ -165,10 +165,4 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
         this.activity = activity;
     }
 
-
-
-
-
-
-
 }

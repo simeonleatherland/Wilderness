@@ -24,12 +24,12 @@ public class GameData {
     public static final int COL = 3;
 
 
-    public GameData()
+    private GameData()
     {
         grid = new Area[ROW][COL];
     }
 
-    public GameData(Area[][] areas, Player plauyer)
+    private GameData(Area[][] areas, Player plauyer)
     {
         grid = areas;
         player = plauyer;
@@ -41,8 +41,6 @@ public class GameData {
     {
         if(instance == null)
         {
-            //havent decided what im going to do in here if there isnt an instance
-            //probs need to create the grid, get the player somehow if it has or hasnt been created
             instance = new GameData();
             instance.generateMap();
         }
@@ -52,7 +50,12 @@ public class GameData {
     //this sets the instance if the game data is
     public static GameData getInstanceFromDB(Area[][] grid, Player p)
     {
-        return new GameData(grid, p);
+        if(instance == null) //essentially this method should only be called when the game is close
+            //which means that instant will always be null, it doesnt make sense to restet the instance if its not so i made a check to make sure of this
+        {
+            instance = new GameData(grid, p);
+        }
+        return instance;
     }
 
     public void setPlayer(Player p)
@@ -67,6 +70,14 @@ public class GameData {
     public Area[][] getGrid() {
         return grid;
     }
+
+    public void resetInstance()
+    {
+        instance = new GameData();
+        player = new Player(100, 0, 0,0, 100);
+        instance.generateMap();
+    }
+
 
     //this is only a temp fix
     public void generateMap()

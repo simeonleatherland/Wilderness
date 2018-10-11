@@ -1,5 +1,6 @@
 package com.example.sl.wilderness.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,16 +8,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.sl.wilderness.R;
 
 
-public class StatusBar extends Fragment {
+public class StatusBar extends Fragment implements View.OnClickListener{
 
     private TextView health,cash,equipment;
+    private Button restart;
     private int cashinitial;
     private double healtha, equip;
+    Activity activity;
 
 
     @Override
@@ -34,9 +38,12 @@ public class StatusBar extends Fragment {
         health = (TextView) v.findViewById(R.id.health);
         cash = (TextView) v.findViewById(R.id.cash);
         equipment = (TextView) v.findViewById(R.id.equipmentmass);
+        restart = (Button) v.findViewById(R.id.restart);
+        restart.setOnClickListener(this);
+
         health.setText("Health: " + healtha);
         cash.setText("Cash: " + cashinitial);
-
+        equipment.setText("Mass: " + equip);
 
         return v;
     }
@@ -61,7 +68,33 @@ public class StatusBar extends Fragment {
     }
     public void updateEquipmentMass(double inEquip)
     {
-        equipment.setText("Equipment Mass: " + inEquip);
+        equipment.setText("Mass: " + inEquip);
+    }
+
+
+    @Override
+    public void onClick(View view)
+    {
+        switch(view.getId())
+        {
+            case R.id.restart:
+                ((StatusBarObserver)activity).restartGame();
+                break;
+        }
+    }
+
+    //This interface allows whoever has the fragment to override this method in the interface
+    public interface StatusBarObserver
+    {
+        void restartGame();
+    }
+
+
+    @Override
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        this.activity = activity;
     }
 
 

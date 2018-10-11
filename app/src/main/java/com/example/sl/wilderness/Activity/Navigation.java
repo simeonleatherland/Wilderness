@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,7 @@ import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
-public class Navigation extends AppCompatActivity implements AreaInfo.OnDescriptionClickedListener {
+public class Navigation extends AppCompatActivity implements AreaInfo.OnDescriptionClickedListener, StatusBar.StatusBarObserver{
 
     //this is used as the key and unique number for items
     public static int NUMITEMS;
@@ -49,6 +50,9 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         db.load();
         //update the current version of the last player so that the static doenst loose touch with the latest each time the activity is ran
         PLAYERVERSION = db.PLAYERVERSION;
+        //if the database load loads null, ie nothing in database
+        //this method will check for that and create the respective null objects
+        //this then can be used for the restart method
         retrieveGameData();
 
         //get the fragment mananger
@@ -83,19 +87,19 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     {
         //get the instance of the map PROBABLY HAVE A METHOD TO GET FROM DATABASE IN FUTURE
         //same for maing character, this is just for testing
-
         Player mainCharacter = db.getCurrPlayer();
         if(mainCharacter == null)
         {
             mainCharacter = new Player(0, 0, 0,0, 100);
             db.insertPlayer(mainCharacter);
         }
+        //retrive the grid from the map
         Area[][] tempGrid = db.getGrid();
         if(tempGrid[0][0] == null) //if theres nothing in the grid
         {
             //create an instance for the gamedata if it hasnt already been created
             map = GameData.getInstance();
-            //insert all the areas into the database and each areas items
+            //insert all the areas into the database and each areas items, from the newly generated map
             db.insertGameGrid(map.getGrid());
             map.setPlayer(mainCharacter);
         }
@@ -171,6 +175,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
                 }
             }
         });
+
     }
 
     @Override
@@ -265,6 +270,23 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         db.updatePlayer(map.getPlayer());
     }
 
+    public void resetAreaFragData()
+    {
+        //update the current row and col of the player
+        int currRow = map.getPlayer().getRowLocation();
+        int currCol = map.getPlayer().getColLocation();
+
+        //get the current area object at the users location
+        //make the areainfo fragment responsible for the current area
+        ai_frag.setCurrentArea(map.getArea(currRow, currCol));
+
+        //make area info update the area info that its responsible for
+        ai_frag.updateInfo();
+        tellThemYouCantDoThat("");
+
+        db.updatePlayer(map.getPlayer());
+    }
+
     /*
     private void checkIfTheyWon(Player inMainCharacter)
     {
@@ -281,32 +303,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     }
 
     */
-/*
 
-    private void restart(String reasonForRestart)
-    {
-        tellThemYouCantDoThat(reasonForRestart);
-        mainCharacter.reset();
-        updateHealth();
-        updateCash();
-        updateEquimentMass();
-        map.restartMap();
-
-        //restarts labels to the origin position of the map
-
-        currRow = mainCharacter.getRowLocation();
-        currCol = mainCharacter.getColLocation();
-
-        currArea = map.getArea(currRow, currCol);
-
-        desc.setText("Description: "); //+ currArea.getDesc());
-        currentArea.setText("Current Area: Row" + mainCharacter.getRowLocation()  + " Col" + mainCharacter.getColLocation());
-        type.setText("Description: " + currArea.getType());
-
-        //restarts the map details to what it was
-
-    }
-*/
 
 
     private void setupViews() {
@@ -328,16 +325,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         ai_frag.setCurrentArea(map.getArea(currRow, currCol));
 
         sb_frag.setupInitial(map.getPlayer().getHealth(), map.getPlayer().getCash(), map.getPlayer().getEquipmentMass());
-        /*
-        ai_frag.updateInfo();
-        //update the user on whats happeneing with the game
-        tellThemYouCantDoThat("Game has started");
 
-        //Update the status bar fragment of their views
-        sb_frag.updateCash(mainCharacter.getCash());
-        sb_frag.updateHealth(mainCharacter.getHealth());
-        sb_frag.updateEquipmentMass(mainCharacter.getEquipmentMass());
-        */
 
     }
 
@@ -345,6 +333,41 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     public void updateAreaInDB(Area area)
     {
         db.updateArea(area);
+    }
+
+
+    @Override
+    public void restartGame()
+    {
+        if(db.clearDatabase())
+        {
+
+            //create a new database
+            db = new WildernessDb(Navigation.this);
+            //load classfields into database if they exist
+            db.load();
+            //create a new player object, generate the map as well
+            map.resetInstance();
+            //if they dont exist WHICH THEY WONT call this method
+            //creates player and areas inside the map
+            retrieveGameData();
+
+
+            //reset the player version and num items since database is 0
+            PLAYERVERSION = 0;
+            NUMITEMS = 0;
+            //reset the map data and the player in the STATUS BAR FRAG
+            //update the UI with the new reseted values
+            sb_frag.updateHealth(map.getPlayer().getHealth());
+            sb_frag.updateCash(map.getPlayer().getCash());
+            sb_frag.updateEquipmentMass(map.getPlayer().getEquipmentMass());
+            //reset area data in the AREA FRAG\
+            resetAreaFragData();
+            Toast.makeText(this, "GAME RESET", Toast.LENGTH_SHORT).show();
+
+        }
+
+
     }
 
 

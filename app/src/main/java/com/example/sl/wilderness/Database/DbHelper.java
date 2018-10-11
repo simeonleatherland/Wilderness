@@ -11,10 +11,12 @@ import com.example.sl.wilderness.ModelPack.Item;
 public class DbHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;
     private static final String DATABASE_NAME = "wilderness.db";
+    private Context context;
 
     public DbHelper(Context c)
     {
         super(c, DATABASE_NAME, null, VERSION);
+        context = c;
     }
 
     @Override
@@ -60,4 +62,11 @@ public class DbHelper extends SQLiteOpenHelper {
             db.needUpgrade(v2);
 
     }
+
+    public static boolean onDelete(Context context)
+    {
+        boolean b = context.deleteDatabase(DATABASE_NAME);
+        return b;
+    }
+
 }

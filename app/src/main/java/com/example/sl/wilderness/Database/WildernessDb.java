@@ -23,12 +23,14 @@ public class WildernessDb {
     private Player currPlayer;
     private Area[][] grid;
     public static int PLAYERVERSION;
+    Context c;
 
     private List<Item> itemsList;
     public static int ITEMNUM;
 
     public WildernessDb(Context context)
     {
+        c = context;
         this.db = new DbHelper(
                 context.getApplicationContext()).getWritableDatabase();
     }
@@ -302,6 +304,12 @@ public class WildernessDb {
         );
         return new DatabaseCursor(cursor);
     }
+
+    public boolean clearDatabase()
+    {
+        return DbHelper.onDelete(c);
+    }
+
 
     public Player getCurrPlayer()
     {
