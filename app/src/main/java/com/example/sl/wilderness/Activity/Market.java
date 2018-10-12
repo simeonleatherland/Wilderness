@@ -61,8 +61,6 @@ public class Market extends AppCompatActivity {
         Area currArea = mapInstance.getArea(row, col);
         createRecyclerView(currentPlayer.getEquipment(), currArea.getItems());
 
-
-
     }
 
 

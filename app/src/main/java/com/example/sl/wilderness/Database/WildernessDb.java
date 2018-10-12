@@ -3,7 +3,9 @@ package com.example.sl.wilderness.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.sl.wilderness.Activity.Navigation;
 import com.example.sl.wilderness.Database.DbSchema.AreaTable;
@@ -23,8 +25,7 @@ public class WildernessDb {
 
     private Player currPlayer;
     private Area[][] grid;
-    public static int PLAYERVERSION;
-    public static int NUMITEMSID;
+    public static int PLAYERVERSION; //REFACTOR IF YOU HAVE TIME YOU DONT NEED THIS THIS IS BAD
 
     Context c;
 
@@ -74,7 +75,7 @@ public class WildernessDb {
         currPlayer = retrievePlayer();
         //calculate the highest ID number thats been created so that you dont override items
         //also allows you to update the items specifically
-        NUMITEMSID = retrieveItems();
+        retrieveItems();
         if(heldList == null)
         {
             currPlayer.setEquipment(heldList);
@@ -103,7 +104,7 @@ public class WildernessDb {
     {
         //create the player
         ContentValues cv = new ContentValues();
-        cv.put(ItemTable.Cols.ID,i.ID);
+        //cv.put(ItemTable.Cols.ID,i.ID);
         cv.put(ItemTable.Cols.COLinMAP, i.getCol());
         cv.put(ItemTable.Cols.ROWinMAP, i.getRow());
         cv.put(ItemTable.Cols.HELD, false);
@@ -113,8 +114,7 @@ public class WildernessDb {
         cv.put(ItemTable.Cols.TYPE, i.getType());
         cv.put(ItemTable.Cols.TYPEVALUE, i.getTypeValue());
 
-        db.insert(ItemTable.NAME, null, cv);
-
+        i.setID(db.insert(ItemTable.NAME, null, cv));
     }
 
 
@@ -129,6 +129,7 @@ public class WildernessDb {
         cv.put(AreaTable.Cols.STARRED, a.isStarred());
         cv.put(AreaTable.Cols.EXPLORED, a.isExplored());
         cv.put(AreaTable.Cols.DESCRIPTION, a.getDescription());
+        //just for safe measures update the row and col and held just incase
         for(Item i : a.getItems())
         {
             i.setRow(a.getRow());
@@ -205,7 +206,7 @@ public class WildernessDb {
         cv.put(ItemTable.Cols.HELD, false);
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
         cv.put(ItemTable.Cols.PRICE, i.getValue());
-        String[] whereValue = {i.ID + ""};
+        String[] whereValue = {String.valueOf(i.ID)};
         db.update(ItemTable.NAME,cv, ItemTable.Cols.ID +" = ?", whereValue);
     }
 
@@ -228,7 +229,6 @@ public class WildernessDb {
             i.setHeld(false);
             updateItem(i);
         }
-
         db.update(AreaTable.NAME, cv, AreaTable.Cols.ID + " = ?" , wherevalue);
     }
 
@@ -270,13 +270,13 @@ public class WildernessDb {
                 area[ii][jj].setCol(jj);
                 //insert the area into the database
                 updateArea(area[ii][jj]);
-                for(Item i : area[ii][jj].getItems())
+                /*for(Item i : area[ii][jj].getItems())
                 {
                     i.setRow(ii);
                     i.setCol(jj);
                     i.setHeld(false);
                     updateItem(i);
-                }
+                }*/
             }
         }
     }
@@ -296,13 +296,13 @@ public class WildernessDb {
                 area[ii][jj].setCol(jj);
                 //insert the area into the database
                 insertArea(area[ii][jj]);
-                for(Item i : area[ii][jj].getItems())
+               /* for(Item i : area[ii][jj].getItems())
                 {
                     i.setRow(ii);
                     i.setCol(jj);
                     i.setHeld(false);
                     insertItem(i);
-                }
+                }*/
             }
         }
     }
@@ -333,7 +333,7 @@ public class WildernessDb {
 
     }
 
-    public int retrieveItems()
+    public void retrieveItems()
     {
         List<Equipment> held = new ArrayList<>();
         List<Item> inArea = new ArrayList<>();
@@ -362,22 +362,7 @@ public class WildernessDb {
         }
         itemsList = inArea;
         heldList = held;
-        int maxNum = 0;
-        for(Item i : held)
-        {
-            if(i.ID > maxNum)
-            {
-                maxNum = i.ID;
-            }
-        }
-        for(Item i : inArea)
-        {
-            if(i.ID > maxNum)
-            {
-                maxNum = i.ID;
-            }
-        }
-        return maxNum;
+
     }
 
 
@@ -417,6 +402,14 @@ public class WildernessDb {
         return DbHelper.onDelete(c);
     }
 
+
+    public void dumpCursor()
+    {
+        Log.d("PLAYER", DatabaseUtils.dumpCursorToString(queryPlayerTable(null,null)));
+        Log.d("AREA", DatabaseUtils.dumpCursorToString(queryAreaTable(null,null)));
+        Log.d("ITEMS", DatabaseUtils.dumpCursorToString(queryItemTable(null,null)));
+
+    }
 
     public Player getCurrPlayer()
     {

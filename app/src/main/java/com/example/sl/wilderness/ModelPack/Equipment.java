@@ -8,9 +8,15 @@ public abstract class Equipment extends Item {
     private double mass;
 
 
-    public Equipment(String inDesc, int inValue, double inMass, int row, int col, boolean held, int id)
+    public Equipment(String inDesc, int inValue, double inMass, int row, int col, boolean held, long id)
     {
         super(inDesc,inValue, row, col, held,id);
+        mass = inMass;
+    }
+
+    public Equipment(String inDesc, int inValue, double inMass, int row, int col, boolean held)
+    {
+        super(inDesc,inValue, row, col, held);
         mass = inMass;
     }
 

@@ -9,10 +9,10 @@ public abstract class Item {
     //row and col values of where the item is located if it ISNT HELD
     private int row;
     private int col;
-    public static int ID;
+    public static long ID;
 
 
-    public Item(String inDesc, int inValue, int inRow, int inCol, boolean held, int id)
+    public Item(String inDesc, int inValue, int inRow, int inCol, boolean held)
     {
         if(inDesc == null)
         {
@@ -33,8 +33,36 @@ public abstract class Item {
         this.held = held;
         this.col = inCol;
         this.row = inRow;
-        ID = id;
     }
+    public Item(String inDesc, int inValue, int inRow, int inCol, boolean held, long id)
+    {
+        if(inDesc == null)
+        {
+            description = "";
+        }
+        else
+        {
+            description = inDesc;
+        }
+        if(inValue < 0)
+        {
+            value = 0;
+        }
+        else
+        {
+            value = inValue;
+        }
+        this.held = held;
+        this.col = inCol;
+        this.row = inRow;
+        setID(id);
+    }
+
+    public void setID(long ID)
+    {
+        this.ID = ID;
+    }
+
 
     public abstract double getTypeValue(); //this is either the health generation or use of the food or equipment
 

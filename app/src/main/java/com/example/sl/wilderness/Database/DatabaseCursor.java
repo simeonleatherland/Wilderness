@@ -60,7 +60,7 @@ public class DatabaseCursor extends CursorWrapper {
     {
         Equipment i = null;
         int value = getInt(getColumnIndex(ItemTable.Cols.PRICE));
-        int id = getInt(getColumnIndex(ItemTable.Cols.ID));
+        long id = getInt(getColumnIndex(ItemTable.Cols.ID));
         String desc = getString(getColumnIndex(ItemTable.Cols.DESCRIPTION));
         String type = getString(getColumnIndex(ItemTable.Cols.TYPE));
         int typevalue = getInt(getColumnIndex(ItemTable.Cols.TYPEVALUE));

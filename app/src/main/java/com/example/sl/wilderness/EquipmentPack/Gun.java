@@ -5,7 +5,11 @@ import com.example.sl.wilderness.ModelPack.Equipment;
 public class Gun extends Equipment {
     public static String TYPE = "GUN";
 
-    public Gun(String inDesc, int inValue, double inMass, int row, int col, boolean held, int id)
+    public Gun(String inDesc, int inValue, double inMass, int row, int col, boolean held)
+    {
+        super(inDesc,inValue,inMass, row, col, held);
+    }
+    public Gun(String inDesc, int inValue, double inMass, int row, int col, boolean held, long id)
     {
         super(inDesc,inValue,inMass, row, col, held,id);
     }

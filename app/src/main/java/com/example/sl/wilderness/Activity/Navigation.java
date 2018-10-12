@@ -70,7 +70,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             sb_frag = new StatusBar();
             fm.beginTransaction().add(R.id.statusnav, sb_frag).commit();
         }
-
+        db.dumpCursor();
 
         //setup all the buttons for the activity, north, south, east or west
         setupViews();
@@ -96,7 +96,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             map.setPlayer(mainCharacter);
         } else {
             //no need to update database since theres no change in stuff, update the count of how many items have been created
-            map = GameData.getInstanceFromDB(tempGrid, mainCharacter, db.NUMITEMSID);
+            map = GameData.getInstanceFromDB(tempGrid, mainCharacter);
         }
     }
 
