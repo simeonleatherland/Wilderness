@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
 
@@ -49,12 +50,14 @@ public class StatusBar extends Fragment implements View.OnClickListener{
     }
 
 
+
+
     //This is to set classfgields to initally set the health cash and mass to the view
-    public void setupInitial(double health, int cash, double equip)
+    public void setupInitial(Player p)
     {
-        this.healtha = health;
-        this.cashinitial = cash;
-        this.equip = equip;
+        this.healtha = p.getHealth();
+        this.cashinitial = p.getCash();
+        this.equip = p.getEquipmentMass();
     }
 
 

@@ -13,11 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sl.wilderness.Database.WildernessDb;
 import com.example.sl.wilderness.Fragments.StatusBar;
 import com.example.sl.wilderness.ModelPack.Area;
 import com.example.sl.wilderness.ModelPack.Equipment;
+import com.example.sl.wilderness.ModelPack.Food;
 import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Item;
 import com.example.sl.wilderness.ModelPack.Player;
@@ -34,7 +36,7 @@ public class Market extends AppCompatActivity {
     private RecyclerView sellRecyclerView;
     private SellAdapter sellAdapter;
     private BuyAdapter buyAdapter;
-
+    private Player currentPlayer;
     private GameData mapInstance;
 
 
@@ -43,7 +45,16 @@ public class Market extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market);
 
+        //retrieve the map and the database from the game data
         mapInstance = GameData.getInstance();
+        db = mapInstance.getDatabase();
+
+
+        //retrieve the current player and the current area
+        currentPlayer = mapInstance.getPlayer();
+        int row = currentPlayer.getRowLocation();
+        int col = currentPlayer.getColLocation();
+        Area currArea = mapInstance.getArea(row, col);
 
         //get and load the database
         FragmentManager fm = getSupportFragmentManager();
@@ -55,10 +66,9 @@ public class Market extends AppCompatActivity {
             fm.beginTransaction().add(R.id.statusmarket, sb_frag).commit();
         }
 
-        Player currentPlayer = mapInstance.getPlayer();
-        int row = currentPlayer.getRowLocation();
-        int col = currentPlayer.getColLocation();
-        Area currArea = mapInstance.getArea(row, col);
+        sb_frag.setupInitial(currentPlayer);
+
+
         createRecyclerView(currentPlayer.getEquipment(), currArea.getItems());
 
     }
@@ -150,6 +160,7 @@ public class Market extends AppCompatActivity {
     {
         TextView cost, description;
         Button buy;
+        Item data;
         public BuyHolder(LayoutInflater layoutInflater, ViewGroup parent)
         {
             super(layoutInflater.inflate(R.layout.buy_cell, parent, false));
@@ -161,6 +172,7 @@ public class Market extends AppCompatActivity {
 
         public void bind(Item data)
         {
+            this.data = data;
             cost.setText("Cost: " + data.getValue());
             description.setText("Type: " + data.getType());
 
@@ -168,13 +180,30 @@ public class Market extends AppCompatActivity {
         @Override
         public void onClick(View v)
         {
+            if(data.getType().equals("FOOD"))
+            {
+                if(currentPlayer.getCash() - data.getValue() >=0 )
+                {
+                    currentPlayer.setCash(currentPlayer.getCash() - data.getValue());
+                    currentPlayer.purchaseFood((Food)data);
 
+                }
+                else
+                {
+                    Toast.makeText(Market.this, "You cant afford that", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+            {
+                currentPlayer.purchaseEquipment((Equipment)data);
+            }
         }
     }
     private class SellHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         TextView cost, description;
         Button sell;
+        Item data;
         public SellHolder(LayoutInflater layoutInflater, ViewGroup parent)
         {
             super(layoutInflater.inflate(R.layout.sell_cell, parent, false));
@@ -186,6 +215,7 @@ public class Market extends AppCompatActivity {
 
         public void bind(Item data)
         {
+            this.data = data;
             cost.setText("Cost: " + data.getValue());
             description.setText("Type: " + data.getType());
 

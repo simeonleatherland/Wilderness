@@ -209,5 +209,13 @@ public class Player {
         return equipment;
     }
 
+    public void purchaseEquipment(Equipment e)
+    {
+        equipment.add(e);
+    }
 
+    public void purchaseFood(Food e)
+    {
+
+    }
 }

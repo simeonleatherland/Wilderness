@@ -273,7 +273,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //set the current area
         ai_frag.setCurrentArea(map.getArea(currRow, currCol));
 
-        sb_frag.setupInitial(map.getPlayer().getHealth(), map.getPlayer().getCash(), map.getPlayer().getEquipmentMass());
+        sb_frag.setupInitial(map.getPlayer());
 
 
     }

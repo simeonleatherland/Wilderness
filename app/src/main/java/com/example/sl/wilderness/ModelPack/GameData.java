@@ -32,16 +32,10 @@ public class GameData {
 
     }
 
-    private GameData(Area[][] areas, Player player, WildernessDb db)
-    {
-        grid = areas;
-        this.player = player;
-        this.db = db;
-    }
-
     private GameData(WildernessDb db)
     {
         this.db = db;
+        grid = new Area[ROW][COL];
         unpackPlayer(db);
         unpackGrid(db);
     }
@@ -94,7 +88,7 @@ public class GameData {
         }
     }
 
-    public void setDatabase(WildernessDb db){this.db = db;}
+    public WildernessDb getDatabase(){return db;}
 
     public void setPlayer(Player p)
     {
