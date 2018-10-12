@@ -2,6 +2,7 @@ package com.example.sl.wilderness.ModelPack;
 
 public class Food extends Item {
     private double health;
+    public static final String TYPE = "FOOD";
 
     //this is used to rebuild
     public Food(String inDesc, int inValue, double inHealth, int row, int col, boolean held, long id)

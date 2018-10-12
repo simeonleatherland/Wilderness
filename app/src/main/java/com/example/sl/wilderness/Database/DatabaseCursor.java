@@ -56,11 +56,11 @@ public class DatabaseCursor extends CursorWrapper {
     }
 
 
-    public Equipment getEquipment()
+    public Item getEquipment()
     {
         Equipment i = null;
         int value = getInt(getColumnIndex(ItemTable.Cols.PRICE));
-        long id = getInt(getColumnIndex(ItemTable.Cols.ID));
+        long id = getInt(getColumnIndex("_id"));
         String desc = getString(getColumnIndex(ItemTable.Cols.DESCRIPTION));
         String type = getString(getColumnIndex(ItemTable.Cols.TYPE));
         int typevalue = getInt(getColumnIndex(ItemTable.Cols.TYPEVALUE));
@@ -125,7 +125,10 @@ public class DatabaseCursor extends CursorWrapper {
         {
             i = new Waterbottle(desc, value, typevalue, row, col, held,id);
         }
-
+        else if(type.equals(Food.TYPE))
+        {
+            return new Food(desc, value, typevalue, row, col, held,id);
+        }
 
         return i;
     }

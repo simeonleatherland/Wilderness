@@ -1,5 +1,6 @@
 package com.example.sl.wilderness.ModelPack;
 
+import com.example.sl.wilderness.Database.WildernessDb;
 import com.example.sl.wilderness.EquipmentPack.Axe;
 import com.example.sl.wilderness.EquipmentPack.Backpack;
 import com.example.sl.wilderness.EquipmentPack.Compass;
@@ -22,6 +23,8 @@ public class GameData {
     public static final int ROW = 3;
     public static final int COL = 3;
 
+    private WildernessDb db;
+
 
     private GameData()
     {
@@ -29,10 +32,11 @@ public class GameData {
 
     }
 
-    private GameData(Area[][] areas, Player player)
+    private GameData(Area[][] areas, Player player, WildernessDb db)
     {
         grid = areas;
         this.player = player;
+        this.db = db;
     }
 
     //static get method
@@ -47,15 +51,17 @@ public class GameData {
     }
 
     //this sets the instance if the game data is
-    public static GameData getInstanceFromDB(Area[][] grid, Player p)
+    public static GameData getInstanceFromDB(Area[][] grid, Player p, WildernessDb db)
     {
         if(instance == null) //essentially this method should only be called when the game is close
             //which means that instant will always be null, it doesnt make sense to restet the instance if its not so i made a check to make sure of this
         {
-            instance = new GameData(grid, p);
+            instance = new GameData(grid, p, db);
         }
         return instance;
     }
+
+    public void setDatabase(WildernessDb db){this.db = db;}
 
     public void setPlayer(Player p)
     {

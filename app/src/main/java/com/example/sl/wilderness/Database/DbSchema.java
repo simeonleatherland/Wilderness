@@ -38,8 +38,8 @@ public class DbSchema {
         public static final String NAME = "items";
         public static class Cols
         {
-            public static final String ID = "item_id"; //allows multiple of the same types at the same row and col in the map
-           public static final String PRICE = "price";
+           // public static final String _id = "_id"; //allows multiple of the same types at the same row and col in the map
+            public static final String PRICE = "price";
 
             public static final String DESCRIPTION = "description";
             public static final String TYPE = "item_type"; //equipment or food

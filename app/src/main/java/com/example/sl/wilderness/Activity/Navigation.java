@@ -85,6 +85,12 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             mainCharacter = new Player(0, 0, 0, 0, 100);
             db.insertPlayer(mainCharacter);
         }
+
+        /*IF THERES TIME I NEED TO REFACTOR THIS SUCH THAT THERES NO 2
+        IFF STATEMENTS AND ONLY USE THE SECOND ONE, sorry for shitty code dave*/
+
+
+        //this will then pass the database to the gamedata, and it will load everything from there
         //retrive the grid from the map
         Area[][] tempGrid = db.getGrid();
         if (tempGrid[0][0] == null) //if theres nothing in the grid
@@ -93,10 +99,12 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             map = GameData.getInstance();
             //insert all the areas into the database and each areas items, from the newly generated map
             db.insertGameGrid(map.getGrid());
+            //set the main player
             map.setPlayer(mainCharacter);
+            map.setDatabase(db);
         } else {
             //no need to update database since theres no change in stuff, update the count of how many items have been created
-            map = GameData.getInstanceFromDB(tempGrid, mainCharacter);
+            map = GameData.getInstanceFromDB(tempGrid, mainCharacter, db);
         }
     }
 

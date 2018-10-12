@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WildernessDb {
+
+    private WildernessDb instance;
+
     private SQLiteDatabase db;
 
     private Player currPlayer;
@@ -38,8 +41,6 @@ public class WildernessDb {
         this.db = new DbHelper(
                 context.getApplicationContext()).getWritableDatabase();
     }
-
-
 
 
     //INSERT
@@ -73,20 +74,24 @@ public class WildernessDb {
     {
         grid = new Area[GameData.ROW][GameData.COL];
         currPlayer = retrievePlayer();
-        //calculate the highest ID number thats been created so that you dont override items
+        //calculate the highest _id number thats been created so that you dont override items
         //also allows you to update the items specifically
         retrieveItems();
         if(heldList == null)
         {
             currPlayer.setEquipment(heldList);
         }
-
-
+        //get the grid of stuff
         grid = getMapGrid();
-        if(grid[0][0] == null)
+        //check if its null
+        if(grid[0][0] != null)
         {
-            sortItemsToAreas(grid, itemsList);
+            if(grid[0][0].getItems().size() == 0)
+            {
+                sortItemsToAreas(grid, itemsList);
+            }
         }
+
     }
 
     private void sortItemsToAreas(Area[][] grid, List<Item> itemsList) {
@@ -104,7 +109,7 @@ public class WildernessDb {
     {
         //create the player
         ContentValues cv = new ContentValues();
-        //cv.put(ItemTable.Cols.ID,i.ID);
+        //cv.put(ItemTable.Cols._id,i._id);
         cv.put(ItemTable.Cols.COLinMAP, i.getCol());
         cv.put(ItemTable.Cols.ROWinMAP, i.getRow());
         cv.put(ItemTable.Cols.HELD, false);
@@ -152,7 +157,7 @@ public class WildernessDb {
     public void removeItem(Item i)
     {
         String[] wherevalue = {};
-        db.delete(ItemTable.NAME, ItemTable.Cols.ID +" = " + i.ID, wherevalue);
+        db.delete(ItemTable.NAME, "_id" +" = " + i.ID, wherevalue);
 
     }
 
@@ -200,14 +205,14 @@ public class WildernessDb {
     {
         //NEED TO UPDATE THIS METHOD TO UPGRADE RATHER THAN INSERT
         ContentValues cv = new ContentValues();
-        cv.put(ItemTable.Cols.ID, i.ID);
+        //cv.put("_id", i.ID);
         cv.put(ItemTable.Cols.COLinMAP, i.getCol());
         cv.put(ItemTable.Cols.ROWinMAP, i.getRow());
         cv.put(ItemTable.Cols.HELD, false);
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
         cv.put(ItemTable.Cols.PRICE, i.getValue());
         String[] whereValue = {String.valueOf(i.ID)};
-        db.update(ItemTable.NAME,cv, ItemTable.Cols.ID +" = ?", whereValue);
+        db.update(ItemTable.NAME,cv, "_id" +" = ?", whereValue);
     }
 
     public void updateArea(Area a)
