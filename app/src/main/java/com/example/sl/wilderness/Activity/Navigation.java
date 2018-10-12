@@ -47,10 +47,9 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         db.load();
         //update the current version of the last player so that the static doenst loose touch with the latest each time the activity is ran
         PLAYERVERSION = db.PLAYERVERSION;
-        //if the database load loads null, ie nothing in database
-        //this method will check for that and create the respective null objects
-        //this then can be used for the restart method
-        retrieveGameData();
+
+        map = GameData.unpackInstanceFromDB(db);
+
 
         //get the fragment mananger
         FragmentManager fm = getSupportFragmentManager();
@@ -77,36 +76,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         onClickListeners();
     }
 
-    public void retrieveGameData() {
-        //get the instance of the map PROBABLY HAVE A METHOD TO GET FROM DATABASE IN FUTURE
-        //same for maing character, this is just for testing
-        Player mainCharacter = db.getCurrPlayer();
-        if (mainCharacter == null) {
-            mainCharacter = new Player(0, 0, 0, 0, 100);
-            db.insertPlayer(mainCharacter);
-        }
 
-        /*IF THERES TIME I NEED TO REFACTOR THIS SUCH THAT THERES NO 2
-        IFF STATEMENTS AND ONLY USE THE SECOND ONE, sorry for shitty code dave*/
-
-
-        //this will then pass the database to the gamedata, and it will load everything from there
-        //retrive the grid from the map
-        Area[][] tempGrid = db.getGrid();
-        if (tempGrid[0][0] == null) //if theres nothing in the grid
-        {
-            //create an instance for the gamedata if it hasnt already been created
-            map = GameData.getInstance();
-            //insert all the areas into the database and each areas items, from the newly generated map
-            db.insertGameGrid(map.getGrid());
-            //set the main player
-            map.setPlayer(mainCharacter);
-            map.setDatabase(db);
-        } else {
-            //no need to update database since theres no change in stuff, update the count of how many items have been created
-            map = GameData.getInstanceFromDB(tempGrid, mainCharacter, db);
-        }
-    }
 
 
     private void onClickListeners() {
@@ -324,9 +294,6 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             db.load();
             //create a new player object, generate the map as well
             map.resetInstance();
-            //if they dont exist WHICH THEY WONT call this method
-            //creates player and areas inside the map
-            retrieveGameData();
 
 
             //reset the player version and num items since database is 0

@@ -39,26 +39,59 @@ public class GameData {
         this.db = db;
     }
 
-    //static get method
+    private GameData(WildernessDb db)
+    {
+        this.db = db;
+        unpackPlayer(db);
+        unpackGrid(db);
+    }
+
     public static GameData getInstance()
     {
         if(instance == null)
         {
-            instance = new GameData();
-            instance.generateMap();
+            throw new IllegalArgumentException("YOU CANT DO THAT SOMETHINGS WRONG");
         }
         return instance;
     }
 
+
     //this sets the instance if the game data is
-    public static GameData getInstanceFromDB(Area[][] grid, Player p, WildernessDb db)
+    public static GameData unpackInstanceFromDB(WildernessDb db)
     {
         if(instance == null) //essentially this method should only be called when the game is close
-            //which means that instant will always be null, it doesnt make sense to restet the instance if its not so i made a check to make sure of this
+        //which means that instant will always be null, it doesnt make sense to restet the instance if its not so i made a check to make sure of this
         {
-            instance = new GameData(grid, p, db);
+            instance = new GameData(db);
         }
         return instance;
+    }
+
+    private void unpackGrid(WildernessDb db) {
+        Area[][] tempGrid = db.getGrid();
+        if (tempGrid[0][0] == null) //if theres nothing in the grid
+        {
+            //if theres no grid, create one
+            generateMap();
+            //insert it into the database
+            db.insertGameGrid(grid);
+        }
+        else //there is a grid in the database
+        {
+            grid = tempGrid;
+        }
+    }
+
+    private void unpackPlayer(WildernessDb db) {
+        Player mainCharacter = db.getCurrPlayer();
+        if (mainCharacter == null) {
+            mainCharacter = new Player(0, 0, 0, 0, 100);
+            db.insertPlayer(mainCharacter);
+        }
+        else
+        {
+            setPlayer(mainCharacter);
+        }
     }
 
     public void setDatabase(WildernessDb db){this.db = db;}
@@ -67,6 +100,7 @@ public class GameData {
     {
         player = p;
     }
+
 
     public Player getPlayer() {
         return player;
