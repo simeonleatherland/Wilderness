@@ -21,10 +21,6 @@ public class Food extends Item {
     }
 
 
-    public double getHealth()
-    {
-        return health;
-    }
 
     @Override
     public String getType()

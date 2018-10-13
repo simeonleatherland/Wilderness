@@ -38,6 +38,7 @@ public class Market extends AppCompatActivity {
     private BuyAdapter buyAdapter;
     private Player currentPlayer;
     private GameData mapInstance;
+    private Area currArea;
 
 
     @Override
@@ -54,8 +55,8 @@ public class Market extends AppCompatActivity {
         currentPlayer = mapInstance.getPlayer();
         int row = currentPlayer.getRowLocation();
         int col = currentPlayer.getColLocation();
-        Area currArea = mapInstance.getArea(row, col);
-
+        currArea = mapInstance.getArea(row, col);
+        currentPlayer.setCash(100);
         //get and load the database
         FragmentManager fm = getSupportFragmentManager();
         sb_frag = (StatusBar)fm.findFragmentById(R.id.statusmarket);
@@ -180,23 +181,51 @@ public class Market extends AppCompatActivity {
         @Override
         public void onClick(View v)
         {
-            if(data.getType().equals("FOOD"))
+            try
             {
-                if(currentPlayer.getCash() - data.getValue() >=0 )
+                if(data.getType().equals("FOOD"))
                 {
-                    currentPlayer.setCash(currentPlayer.getCash() - data.getValue());
+                    //try purchase the food, throw exception if they have no cash
                     currentPlayer.purchaseFood((Food)data);
-
+                    //update health and cash of the player after buying food
+                    sb_frag.updateCash(currentPlayer.getCash());
+                    sb_frag.updateHealth(currentPlayer.getHealth());
                 }
                 else
                 {
-                    Toast.makeText(Market.this, "You cant afford that", Toast.LENGTH_SHORT).show();
+                    //purhcase equipment if they can
+                    currentPlayer.purchaseEquipment((Equipment)data);
+                    sb_frag.updateCash(currentPlayer.getCash());
+                    sb_frag.updateEquipmentMass(currentPlayer.getEquipmentMass());
+
+
                 }
             }
-            else
+            catch(IllegalArgumentException i)
             {
-                currentPlayer.purchaseEquipment((Equipment)data);
+                Toast.makeText(Market.this, "You cant afford that", Toast.LENGTH_SHORT).show();
             }
+            catch(IllegalStateException e)
+            {
+                //MAKE THE PLAYER DIEDf her dont know how to do this yet
+            }
+
+            //remove the item from the area food or equipment
+            currArea.getItems().remove(data);
+            //set the data to be held and the row and column
+            data.setHeld(true);
+            data.setRow(-1);
+            data.setCol(-1);
+
+            //update the area and the player in the database... NEED TO FIX THIS
+            db.updateArea(currArea);
+            db.updatePlayer(currentPlayer);
+
+            //tell the adapters that shit changed
+            buyAdapter.notifyDataSetChanged();
+            sellAdapter.notifyDataSetChanged();
+            db.dumpCursor();
+
         }
     }
     private class SellHolder extends RecyclerView.ViewHolder implements View.OnClickListener
@@ -223,6 +252,36 @@ public class Market extends AppCompatActivity {
         @Override
         public void onClick(View v)
         {
+            try
+            {
+                //sell equipment at an increased cost
+                currentPlayer.sellEquipment((Equipment)data);
+                sb_frag.updateCash(currentPlayer.getCash());
+                sb_frag.updateEquipmentMass(currentPlayer.getEquipmentMass());
+
+                //add the item to the area
+                currArea.getItems().add(data);
+
+                //set the data to no longer held and the row and column
+                data.setHeld(false);
+                data.setRow(currArea.getRow());
+                data.setCol(currArea.getCol());
+
+                //update the area and the player in the database... NEED TO FIX THIS
+                db.updateArea(currArea);
+                db.updatePlayer(currentPlayer);
+
+                //tell the adapters that shit changed
+                buyAdapter.notifyDataSetChanged();
+                sellAdapter.notifyDataSetChanged();
+                db.dumpCursor();
+
+            }
+            catch(IllegalArgumentException i)
+            {
+                Toast.makeText(Market.this, "You cant sell that", Toast.LENGTH_SHORT).show();
+            }
+
 
         }
     }

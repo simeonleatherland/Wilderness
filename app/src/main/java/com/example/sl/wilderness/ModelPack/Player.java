@@ -137,12 +137,15 @@ public class Player {
         return true;
     }
     //set health checks the change value, this is usally
-    public void setHealth(int changeValue)
+    public void setHealth(double changeValue) throws IllegalStateException
     {
 
         if(health + changeValue < 0)
         {
             health = 0;
+            //set health to 0, throw illegal state such player has to die
+            throw new IllegalStateException("PLAYER DIED");
+
         }
         else if(health + changeValue > 100)
         {
@@ -177,9 +180,6 @@ public class Player {
         this.cash = cash;
     }
 
-    public void setHealth(double health) {
-        this.health = health;
-    }
 
     public void setEquipmentMass(double equipmentMass) {
         this.equipmentMass = equipmentMass;
@@ -211,11 +211,52 @@ public class Player {
 
     public void purchaseEquipment(Equipment e)
     {
-        equipment.add(e);
+        //see if they can purchase it with the cash they have
+        if(getCash() - e.getValue() >=0 )
+        {
+            //set their cash down if they can afford
+            setCash(getCash() - e.getValue());
+            //add the item to the equipment list
+            equipment.add(e);
+            //increase equipt mass by that
+            setEquipmentMass(getEquipmentMass()+ e.getTypeValue());
+        }
+        else
+        {
+            throw new IllegalArgumentException("cant afford that");
+        }
     }
 
-    public void purchaseFood(Food e)
+    public void purchaseFood(Food e) throws IllegalStateException
     {
+        //see if they can purchase it with the cash they have
+        if(getCash() - e.getValue() >=0 )
+        {
+            //set their cash down if they can afford
+            setCash(getCash() - e.getValue());
+            //increase their health by the food
+            setHealth(e.getTypeValue()); //note type value is the health for food, mass for equipment
+        }
+        else
+        {
+            throw new IllegalArgumentException("cant afford that");
+        }
+    }
+
+    public void sellEquipment(Equipment e) throws IllegalArgumentException
+    {
+        if(e != null)
+        {
+            //set the cash to 0.75 of the value from the spec sheet
+            setCash((int)(e.getValue()*0.75 + cash));
+            //remove from the list of the plyaer
+            getEquipment().remove(e);
+
+        }
+        else
+        {
+            throw new IllegalArgumentException("cant sell that item for some reason");
+        }
 
     }
 }
