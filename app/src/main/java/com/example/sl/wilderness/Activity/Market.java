@@ -231,55 +231,66 @@ public class Market extends AppCompatActivity {
     private class SellHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         TextView cost, description;
-        Button sell;
+        Button sell, use;
         Item data;
+
         public SellHolder(LayoutInflater layoutInflater, ViewGroup parent)
         {
             super(layoutInflater.inflate(R.layout.sell_cell, parent, false));
             cost = (TextView) itemView.findViewById(R.id.sellcost);
             description = (TextView) itemView.findViewById(R.id.selldesc);
             sell = (Button)itemView.findViewById(R.id.sellbutton);
+            use = (Button)itemView.findViewById(R.id.usebutton);
             sell.setOnClickListener(this);
         }
 
         public void bind(Item data)
         {
             this.data = data;
-            cost.setText("Cost: " + data.getValue());
+            cost.setText("Cost: " + (data.getValue() * 0.75));
             description.setText("Type: " + data.getType());
 
         }
         @Override
         public void onClick(View v)
         {
-            try
+            switch (v.getId())
             {
-                //sell equipment at an increased cost
-                currentPlayer.sellEquipment((Equipment)data);
-                sb_frag.updateCash(currentPlayer.getCash());
-                sb_frag.updateEquipmentMass(currentPlayer.getEquipmentMass());
+                case R.id.sellbutton:
+                    try
+                    {
+                        //sell equipment at an increased cost
+                        currentPlayer.sellEquipment((Equipment)data);
+                        sb_frag.updateCash(currentPlayer.getCash());
+                        sb_frag.updateEquipmentMass(currentPlayer.getEquipmentMass());
 
-                //add the item to the area
-                currArea.getItems().add(data);
+                        //add the item to the area
+                        currArea.getItems().add(data);
 
-                //set the data to no longer held and the row and column
-                data.setHeld(false);
-                data.setRow(currArea.getRow());
-                data.setCol(currArea.getCol());
+                        //set the data to no longer held and the row and column
+                        data.setHeld(false);
+                        data.setRow(currArea.getRow());
+                        data.setCol(currArea.getCol());
 
-                //update the area and the player in the database... NEED TO FIX THIS
-                db.updateArea(currArea);
-                db.updatePlayer(currentPlayer);
+                        //update the area and the player in the database... NEED TO FIX THIS
+                        db.updateArea(currArea);
+                        db.updatePlayer(currentPlayer);
 
-                //tell the adapters that shit changed
-                buyAdapter.notifyDataSetChanged();
-                sellAdapter.notifyDataSetChanged();
-                db.dumpCursor();
+                        //tell the adapters that shit changed
+                        buyAdapter.notifyDataSetChanged();
+                        sellAdapter.notifyDataSetChanged();
+                        db.dumpCursor();
 
-            }
-            catch(IllegalArgumentException i)
-            {
-                Toast.makeText(Market.this, "You cant sell that", Toast.LENGTH_SHORT).show();
+                    }
+                    catch(IllegalArgumentException i)
+                    {
+                        Toast.makeText(Market.this, "You cant sell that", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case R.id.usebutton:
+                    //do some stuff here to use the item
+                    break;
+
             }
 
 
