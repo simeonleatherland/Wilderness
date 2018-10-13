@@ -40,6 +40,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
     private GameData mapInstance;
     private Area currArea;
 
+    public static final int RESTART_KEY = 10;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,13 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
 
         sb_frag.setupInitial(currentPlayer);
 
+        Button leave = (Button)findViewById(R.id.leavebutton);
+        leave.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                setResult(RESULT_OK, null);
+                finish();
+            }
+        });
 
         createRecyclerView(currentPlayer.getEquipment(), currArea.getItems());
 
@@ -314,7 +323,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
     @Override
     public void restartGame(String text)
     {
-        System.out.println();
+        setResult(RESTART_KEY, null);
+        finish();
     }
 
 }

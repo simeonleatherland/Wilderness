@@ -1,6 +1,7 @@
 package com.example.sl.wilderness.Activity;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,9 @@ import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
 public class Navigation extends AppCompatActivity implements AreaInfo.OnDescriptionClickedListener, StatusBar.StatusBarObserver {
+
+    public static final int REQUEST_CODE_MARKET = 2;
+    public static final int REQUEST_CODE_WILDERNESS = 1;
 
     GameData map;
     AreaInfo ai_frag;
@@ -124,14 +128,35 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         option.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (ai_frag.getCurrentArea().isTown()) {
-                    startActivity(Market.getIntent(Navigation.this));
-                    //startActivityForResult(Market.getIntent(Navagation.this, mainCharacter, currArea), REQUEST_CODE_MARKET);
+                    startActivityForResult(Market.getIntent(Navigation.this), REQUEST_CODE_MARKET);
                 } else {
-                    startActivity(Wilderness.getIntent(Navigation.this));
-                    //  startActivityForResult(Wilderness.getIntent(Navagation.this, mainCharacter, currArea), REQUEST_CODE_WILDERNESS);
+                    startActivityForResult(Wilderness.getIntent(Navigation.this), REQUEST_CODE_WILDERNESS);
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnIntent)
+    {
+        //this is if the user selects the restart button on the menu
+        //use a result code of 10 just for the sake of it
+        if(resultCode == Market.RESTART_KEY && requestCode == REQUEST_CODE_MARKET)
+        {
+            restartGame("Game will restart now");
+        }
+        else if(resultCode == Wilderness.RESTART_KEY && requestCode == REQUEST_CODE_WILDERNESS)
+        {
+            restartGame("Game will restart now");
+        }
+        else if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_WILDERNESS)
+        {
+
+        }
+        else if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_MARKET)
+        {
+
+        }
     }
 
     @Override

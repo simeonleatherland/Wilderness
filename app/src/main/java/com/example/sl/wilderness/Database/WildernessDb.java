@@ -18,11 +18,11 @@ import com.example.sl.wilderness.ModelPack.Item;
 import com.example.sl.wilderness.ModelPack.Player;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class WildernessDb {
 
-    private WildernessDb instance;
 
     private SQLiteDatabase db;
 
@@ -71,14 +71,19 @@ public class WildernessDb {
 
     public void load()
     {
+        dumpCursor();
         grid = new Area[GameData.ROW][GameData.COL];
         currPlayer = retrievePlayer();
         //calculate the highest _id number thats been created so that you dont override items
         //also allows you to update the items specifically
         retrieveItems();
-        if(heldList != null)
+        if(heldList != null && currPlayer != null)
         {
             currPlayer.setEquipment(heldList);
+        }
+        else if(currPlayer != null)
+        {
+            currPlayer.setEquipment(new LinkedList<Equipment>());
         }
         //get the grid of stuff
         grid = getMapGrid();

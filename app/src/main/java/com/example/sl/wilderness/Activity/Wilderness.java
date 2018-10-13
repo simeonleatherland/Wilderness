@@ -27,7 +27,7 @@ import com.example.sl.wilderness.R;
 
 import java.util.List;
 
-public class Wilderness extends AppCompatActivity {
+public class Wilderness extends AppCompatActivity implements StatusBar.StatusBarObserver{
 
     private StatusBar sb_frag;
     private WildernessDb db;
@@ -38,6 +38,8 @@ public class Wilderness extends AppCompatActivity {
     private Player currentPlayer;
     private GameData mapInstance;
     private Area currArea;
+    public static final int RESTART_KEY = 11;
+
 
 
     @Override
@@ -67,7 +69,13 @@ public class Wilderness extends AppCompatActivity {
         }
 
         sb_frag.setupInitial(currentPlayer);
-
+        Button leave = (Button)findViewById(R.id.leavebutton);
+        leave.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                setResult(RESULT_OK, null);
+                finish();
+            }
+        });
 
         createRecyclerView(currentPlayer.getEquipment(), currArea.getItems());
 
@@ -308,6 +316,14 @@ public class Wilderness extends AppCompatActivity {
         Intent intent = new Intent(c, Wilderness.class);
         return intent;
 
+    }
+
+    @Override
+    public void restartGame(String text)
+    {
+        Intent returnIntent = new Intent();
+        setResult(RESTART_KEY, returnIntent);
+        finish();
     }
     
 }
