@@ -20,7 +20,6 @@ import com.example.sl.wilderness.R;
 
 public class Navigation extends AppCompatActivity implements AreaInfo.OnDescriptionClickedListener, StatusBar.StatusBarObserver {
 
-    public static int PLAYERVERSION;
     GameData map;
     AreaInfo ai_frag;
     StatusBar sb_frag;
@@ -28,13 +27,6 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
     private Button north, south, east, west, option, restart;
 
-    @Override
-    protected void onSaveInstanceState(Bundle savedInstance) {
-        super.onSaveInstanceState(savedInstance);
-        db.insertPlayer(map.getPlayer());
-        db.updateGameGrid(map.getGrid());
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +38,6 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //load the current player into the classifeld in the wilderness database
         db.load();
         //update the current version of the last player so that the static doenst loose touch with the latest each time the activity is ran
-        PLAYERVERSION = db.PLAYERVERSION;
 
         map = GameData.unpackInstanceFromDB(db);
 
@@ -136,7 +127,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
                     startActivity(Market.getIntent(Navigation.this));
                     //startActivityForResult(Market.getIntent(Navagation.this, mainCharacter, currArea), REQUEST_CODE_MARKET);
                 } else {
-
+                    startActivity(Wilderness.getIntent(Navigation.this));
                     //  startActivityForResult(Wilderness.getIntent(Navagation.this, mainCharacter, currArea), REQUEST_CODE_WILDERNESS);
                 }
             }
@@ -292,12 +283,8 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             db = new WildernessDb(Navigation.this);
             //load classfields into database if they exist
             db.load();
-            //create a new player object, generate the map as well
-            map.resetInstance();
+            map = map.resetInstance(db);
 
-
-            //reset the player version and num items since database is 0
-            PLAYERVERSION = 0;
             //reset the map data and the player in the STATUS BAR FRAG
             //update the UI with the new reseted values
             sb_frag.updateHealth(map.getPlayer().getHealth());
@@ -313,12 +300,5 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
     }
 
 
-    public static int getVersion() {
-        PLAYERVERSION++;
-        return PLAYERVERSION;
-    }
 
-    public static int getNonUpdatingVersion() {
-        return PLAYERVERSION;
-    }
 }

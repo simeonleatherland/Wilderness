@@ -9,7 +9,7 @@ public abstract class Item {
     //row and col values of where the item is located if it ISNT HELD
     private int row;
     private int col;
-    public static long ID;
+    public long ID;
 
 
     public Item(String inDesc, int inValue, int inRow, int inCol, boolean held)

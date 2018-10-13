@@ -15,7 +15,7 @@ public class Player {
     private double health;
     private double equipmentMass;
     private List<Equipment> equipment;
-    public static int VERSION;
+    public static long VERSION;
 
     public Player(int cash, double equipmentMass, int row, int col, int health)
     {
@@ -49,11 +49,10 @@ public class Player {
             Log.i("BadRowCol", "Please fix row and col as its out of scope");
             throw new IllegalArgumentException("Row and Col are bad");
         }
-        //get the version of the player
-        VERSION = Navigation.getVersion();
+
 
     }
-    public Player(int cash, double equipmentMass, int row, int col, int health, int inVersion)
+    public Player(int cash, double equipmentMass, int row, int col, int health, long inVersion)
     {
         if(cash < 0)
         {
@@ -258,5 +257,55 @@ public class Player {
             throw new IllegalArgumentException("cant sell that item for some reason");
         }
 
+    }
+
+    public void pickupEquipment(Equipment e)
+    {
+        if(e != null)
+        {
+            //add the item to the equipment list
+            equipment.add(e);
+            //increase equipt mass by that
+            setEquipmentMass(getEquipmentMass()+ e.getTypeValue());
+        }
+        else
+        {
+            throw new IllegalArgumentException("null object");
+        }
+
+    }
+
+    public void pickupFood(Food e) throws IllegalStateException //throw excpetion if they die
+    {
+        if(e != null)
+        {
+            //increase their health by the food
+            setHealth(e.getTypeValue()); //note type value is the health for food, mass for equipment
+        }
+        else
+        {
+            throw new IllegalArgumentException("null object");
+        }
+
+    }
+
+    public void dropEquipment(Equipment e) throws IllegalArgumentException
+    {
+        if(e != null)
+        {
+            //remove from the list of the player
+            getEquipment().remove(e);
+
+        }
+        else
+        {
+            throw new IllegalArgumentException("null object");
+        }
+
+    }
+
+    public void setVERSION(long version)
+    {
+        VERSION = version;
     }
 }

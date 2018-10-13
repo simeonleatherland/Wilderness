@@ -28,7 +28,6 @@ public class WildernessDb {
 
     private Player currPlayer;
     private Area[][] grid;
-    public static int PLAYERVERSION; //REFACTOR IF YOU HAVE TIME YOU DONT NEED THIS THIS IS BAD
 
     Context c;
 
@@ -49,7 +48,6 @@ public class WildernessDb {
         //create the player
         ContentValues cv = new ContentValues();
         //gets and updagtes the player version so when upgrading you can update the correct one
-        cv.put(PlayerTable.Cols.ID, p.VERSION);
         cv.put(PlayerTable.Cols.COL, p.getColLocation());
         cv.put(PlayerTable.Cols.ROW, p.getRowLocation());
         cv.put(PlayerTable.Cols.CASH, p.getCash());
@@ -67,7 +65,8 @@ public class WildernessDb {
             i.setHeld(true);
             insertItem(i);
         }
-        db.insert(PlayerTable.NAME, null, cv);
+        //sets the version number
+        p.setVERSION(db.insert(PlayerTable.NAME, null, cv));
     }
 
     public void load()
@@ -77,7 +76,7 @@ public class WildernessDb {
         //calculate the highest _id number thats been created so that you dont override items
         //also allows you to update the items specifically
         retrieveItems();
-        if(heldList == null)
+        if(heldList != null)
         {
             currPlayer.setEquipment(heldList);
         }
@@ -112,7 +111,7 @@ public class WildernessDb {
         //cv.put(ItemTable.Cols._id,i._id);
         cv.put(ItemTable.Cols.COLinMAP, i.getCol());
         cv.put(ItemTable.Cols.ROWinMAP, i.getRow());
-        cv.put(ItemTable.Cols.HELD, false);
+        cv.put(ItemTable.Cols.HELD, i.getHeld());
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
         cv.put(ItemTable.Cols.PRICE, i.getValue());
         //type is the type of object it is so that i can recreate
@@ -145,12 +144,11 @@ public class WildernessDb {
         db.insert(AreaTable.NAME, null, cv);
     }
 
-
     //REMOVE
     public void removePlayer(Player p )
     {
         String[] wherevalue = {};
-        db.delete(PlayerTable.NAME, PlayerTable.Cols.ID +" = " + Navigation.getNonUpdatingVersion(), wherevalue);
+        db.delete(PlayerTable.NAME, "_id" +" = " + p.VERSION, wherevalue);
 
     }
 
@@ -175,9 +173,8 @@ public class WildernessDb {
      */
     public void updatePlayer(Player p)
     {
-        String[] whereValues = {};
+        String[] whereValues = {String.valueOf(p.VERSION)};
         ContentValues cv = new ContentValues();
-        cv.put(PlayerTable.Cols.ID, Navigation.getNonUpdatingVersion());
         cv.put(PlayerTable.Cols.COL, p.getColLocation());
         cv.put(PlayerTable.Cols.ROW, p.getRowLocation());
         cv.put(PlayerTable.Cols.CASH, p.getCash());
@@ -195,7 +192,7 @@ public class WildernessDb {
             i.setHeld(true);
             updateItem(i);
         }
-        db.update(PlayerTable.NAME, cv, PlayerTable.Cols.ID + " = " + Navigation.getNonUpdatingVersion(), whereValues);
+        db.update(PlayerTable.NAME, cv, "_id" + " = ?", whereValues);
     }
 
 
@@ -205,10 +202,10 @@ public class WildernessDb {
     {
         //NEED TO UPDATE THIS METHOD TO UPGRADE RATHER THAN INSERT
         ContentValues cv = new ContentValues();
-        //cv.put("_id", i.ID);
+        cv.put("_id", i.ID);
         cv.put(ItemTable.Cols.COLinMAP, i.getCol());
         cv.put(ItemTable.Cols.ROWinMAP, i.getRow());
-        cv.put(ItemTable.Cols.HELD, false);
+        cv.put(ItemTable.Cols.HELD, i.getHeld());
         cv.put(ItemTable.Cols.DESCRIPTION, i.getDescription());
         cv.put(ItemTable.Cols.PRICE, i.getValue());
         String[] whereValue = {String.valueOf(i.ID)};
@@ -332,7 +329,6 @@ public class WildernessDb {
         }
         else
         {
-            PLAYERVERSION = p.get(p.size()-1).VERSION; // this is the current player version number
             return p.get(p.size()-1);
         }
 
@@ -367,7 +363,6 @@ public class WildernessDb {
         }
         itemsList = inArea;
         heldList = held;
-
     }
 
 

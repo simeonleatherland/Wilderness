@@ -1,5 +1,6 @@
 package com.example.sl.wilderness.ModelPack;
 
+import com.example.sl.wilderness.Activity.Wilderness;
 import com.example.sl.wilderness.Database.WildernessDb;
 import com.example.sl.wilderness.EquipmentPack.Axe;
 import com.example.sl.wilderness.EquipmentPack.Backpack;
@@ -81,6 +82,7 @@ public class GameData {
         if (mainCharacter == null) {
             mainCharacter = new Player(0, 0, 0, 0, 100);
             db.insertPlayer(mainCharacter);
+            setPlayer(mainCharacter);
         }
         else
         {
@@ -95,6 +97,10 @@ public class GameData {
         player = p;
     }
 
+    public void setDb(WildernessDb d)
+    {
+        this.db = d;
+    }
 
     public Player getPlayer() {
         return player;
@@ -104,11 +110,10 @@ public class GameData {
         return grid;
     }
 
-    public void resetInstance()
+    public GameData resetInstance(WildernessDb db)
     {
-        instance = new GameData();
-        player = new Player(100, 0, 0,0, 100);
-        instance.generateMap();
+        instance = new GameData(db);
+        return instance;
     }
 
 

@@ -6,7 +6,6 @@ public class DbSchema {
         public static final String NAME = "player";
         public static class Cols
         {
-            public static final String ID = "player_id"; //allows multiple of the same types at the same row and col in the map
             public static final String ROW = "row_location";
             public static final String COL = "col_location";
             public static final String CASH = "cash";
@@ -46,7 +45,7 @@ public class DbSchema {
             public static final String TYPEVALUE = "type_value_massORhealth";
 
             //is the player currently holding this
-            public static final String HELD = "is_help";
+            public static final String HELD = "is_held";
 
             //if it isnt held then set the row and col location of where it is held in the game map
             public static final String ROWinMAP = "row_location";

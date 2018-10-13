@@ -25,10 +25,9 @@ import com.example.sl.wilderness.ModelPack.Item;
 import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
-
 import java.util.List;
 
-public class Market extends AppCompatActivity implements StatusBar.StatusBarObserver {
+public class Wilderness extends AppCompatActivity {
 
     private StatusBar sb_frag;
     private WildernessDb db;
@@ -44,7 +43,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_market);
+        setContentView(R.layout.activity_wilderness);
 
         //retrieve the map and the database from the game data
         mapInstance = GameData.getInstance();
@@ -82,8 +81,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
         sellRecyclerView = (RecyclerView) findViewById(R.id.sellrv);
         sellRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL, false));
 
-        sellAdapter = new SellAdapter(Market.this, playerItems);
-        buyAdapter = new BuyAdapter(Market.this, areaItems);
+        sellAdapter = new SellAdapter(this, playerItems);
+        buyAdapter = new BuyAdapter(this, areaItems);
         buyRecyclerView.setAdapter(buyAdapter);
         sellRecyclerView.setAdapter(sellAdapter);
     }
@@ -169,12 +168,13 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
             description = (TextView) itemView.findViewById(R.id.desc);
             buy = (Button)itemView.findViewById(R.id.buybutton);
             buy.setOnClickListener(this);
+            buy.setText("PICKUP");
         }
 
         public void bind(Item data)
         {
             this.data = data;
-            cost.setText("Cost: " + data.getValue());
+            cost.setText("Cost: free");
             description.setText("Type: " + data.getType());
 
         }
@@ -186,9 +186,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                 if(data.getType().equals("FOOD"))
                 {
                     //try purchase the food, throw exception if they have no cash
-                    currentPlayer.purchaseFood((Food)data);
+                    currentPlayer.pickupFood((Food)data);
                     //update health and cash of the player after buying food
-                    sb_frag.updateCash(currentPlayer.getCash());
                     sb_frag.updateHealth(currentPlayer.getHealth());
 
                     //remove the item from the area food or equipment
@@ -198,15 +197,14 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                 else
                 {
                     //purhcase equipment if they can
-                    currentPlayer.purchaseEquipment((Equipment)data);
-                    sb_frag.updateCash(currentPlayer.getCash());
+                    currentPlayer.pickupEquipment((Equipment)data);
                     sb_frag.updateEquipmentMass(currentPlayer.getEquipmentMass());
-
 
                     //set the data to be held and the row and column
                     data.setHeld(true);
                     data.setRow(-1);
                     data.setCol(-1);
+
                     //remove the item from the area food or equipment
                     currArea.getItems().remove(data);
                 }
@@ -224,11 +222,11 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
             }
             catch(IllegalArgumentException i)
             {
-                Toast.makeText(Market.this, "You cant afford that", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Wilderness.this, "You cant pick this up", Toast.LENGTH_SHORT).show();
             }
             catch(IllegalStateException e)
             {
-                //MAKE THE PLAYER DIEDf her dont know how to do this yet
+                //MAKE THE PLAYER DIEDf her don't know how to do this yet
             }
 
 
@@ -249,12 +247,13 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
             sell = (Button)itemView.findViewById(R.id.sellbutton);
             use = (Button)itemView.findViewById(R.id.usebutton);
             sell.setOnClickListener(this);
+            sell.setText("DROP");
+            cost.setText("");
         }
 
         public void bind(Item data)
         {
             this.data = data;
-            cost.setText("Cost: " + (data.getValue() * 0.75));
             description.setText("Type: " + data.getType());
 
         }
@@ -291,7 +290,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                     }
                     catch(IllegalArgumentException i)
                     {
-                        Toast.makeText(Market.this, "You cant sell that", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Wilderness.this, "You cant sell that", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case R.id.usebutton: //use an item
@@ -306,15 +305,10 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
 
     public static Intent getIntent(Context c)
     {
-        Intent intent = new Intent(c, Market.class);
+        Intent intent = new Intent(c, Wilderness.class);
         return intent;
 
     }
-
-    @Override
-    public void restartGame(String text)
-    {
-        System.out.println();
-    }
-
+    
 }
+
