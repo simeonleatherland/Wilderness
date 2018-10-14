@@ -23,13 +23,15 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
     public static final int REQUEST_CODE_MARKET = 2;
     public static final int REQUEST_CODE_WILDERNESS = 1;
+    public static final int REQUEST_CODE_OVERVIEW = 1;
+
 
     GameData map;
     AreaInfo ai_frag;
     StatusBar sb_frag;
     WildernessDb db;
 
-    private Button north, south, east, west, option, restart;
+    private Button north, south, east, west, option, restart,overview;
 
 
     @Override
@@ -134,6 +136,13 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
                 }
             }
         });
+        overview.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivityForResult(Overview.getIntent(Navigation.this), REQUEST_CODE_WILDERNESS);
+
+            }
+
+        });
     }
 
     @Override
@@ -154,6 +163,10 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
         }
         else if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_MARKET)
+        {
+
+        }
+        else if(requestCode == Overview.RESTART_KEY && requestCode == REQUEST_CODE_OVERVIEW)
         {
 
         }
@@ -279,7 +292,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         west = (Button) findViewById(R.id.west);
         option = (Button) findViewById(R.id.option);
         restart = (Button) findViewById(R.id.restart);
-
+        overview = (Button) findViewById(R.id.overview);
 
         //proably will be from the data base, but will be done later on
         int currRow = map.getPlayer().getRowLocation();

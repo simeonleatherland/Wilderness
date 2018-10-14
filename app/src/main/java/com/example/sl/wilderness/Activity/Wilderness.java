@@ -57,7 +57,7 @@ public class Wilderness extends AppCompatActivity implements StatusBar.StatusBar
         int row = currentPlayer.getRowLocation();
         int col = currentPlayer.getColLocation();
         currArea = mapInstance.getArea(row, col);
-        currentPlayer.setCash(100);
+
         //get and load the database
         FragmentManager fm = getSupportFragmentManager();
         sb_frag = (StatusBar)fm.findFragmentById(R.id.statusmarket);

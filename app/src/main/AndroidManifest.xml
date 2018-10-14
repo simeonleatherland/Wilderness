@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.Market" />
-        <activity android:name=".Activity.Wilderness"></activity>
+        <activity android:name=".Activity.Wilderness" />
+        <activity android:name=".Activity.Overview"></activity>
     </application>
 
 </manifest>
