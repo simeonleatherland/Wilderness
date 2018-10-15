@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sl.wilderness.Database.WildernessDb;
+import com.example.sl.wilderness.EquipmentPack.PortaSmell;
 import com.example.sl.wilderness.Fragments.StatusBar;
 import com.example.sl.wilderness.ModelPack.Area;
 import com.example.sl.wilderness.ModelPack.Equipment;
@@ -41,6 +42,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
     private Area currArea;
 
     public static final int RESTART_KEY = 10;
+    private final int REQUEST_CODE_SMELL = 1;
 
 
     @Override
@@ -58,7 +60,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
         int row = currentPlayer.getRowLocation();
         int col = currentPlayer.getColLocation();
         currArea = mapInstance.getArea(row, col);
-        currentPlayer.setCash(100);
+
+
         //get and load the database
         FragmentManager fm = getSupportFragmentManager();
         sb_frag = (StatusBar)fm.findFragmentById(R.id.statusmarket);
@@ -225,6 +228,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                 db.updateArea(currArea);
                 //update the player as the player will now have an extra item
                 db.updatePlayer(currentPlayer);
+                //tell the map that the player has changed
+                mapInstance.setPlayer(db.getCurrPlayer());
 
                 //tell the adapters that shit changed
                 buyAdapter.notifyDataSetChanged();
@@ -305,6 +310,10 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                     break;
                 case R.id.usebutton: //use an item
                     //do some stuff here to use the item
+                    if(data.getType() == PortaSmell.TYPE)
+                    {
+                        startActivityForResult(SmellOScope.getIntent(Market.this), REQUEST_CODE_SMELL);
+                    }
                     break;
 
             }
@@ -313,6 +322,17 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnIntent)
+    {
+        //this is if the user selects the restart button on the menu
+        //use a result code of 10 just for the sake of it
+        if(resultCode == SmellOScope.RESTART_KEY && requestCode == REQUEST_CODE_SMELL)
+        {
+            restartGame("Game will restart now");
+        }
+
+    }
     public static Intent getIntent(Context c)
     {
         Intent intent = new Intent(c, Market.class);

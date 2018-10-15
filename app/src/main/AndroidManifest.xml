@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".Activity.Market" />
         <activity android:name=".Activity.Wilderness" />
-        <activity android:name=".Activity.Overview"></activity>
+        <activity android:name=".Activity.Overview" />
+        <activity android:name=".Activity.SmellOScope"></activity>
     </application>
 
 </manifest>

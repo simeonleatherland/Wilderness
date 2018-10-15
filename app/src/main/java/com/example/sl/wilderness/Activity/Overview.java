@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,7 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
     private Player currentPlayer;
     private StatusBar sb_frag;
     private RecyclerView wholeMapRecyclerView;
+    private MapAdapter mapAdapter;
 
     public static final int RESTART_KEY = 12;
 
@@ -81,8 +84,11 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
     }
 
     private void createRecyclerView(Area[][] grid) {
-        wholeMapRecyclerView = (RecyclerView) findViewById(R.id.buyrv);
-        wholeMapRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(),GameData.ROW, GridLayoutManager.HORIZONTAL, false));
+
+        wholeMapRecyclerView = (RecyclerView) findViewById(R.id.rvoverview);
+        wholeMapRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(),GameData.COL, GridLayoutManager.HORIZONTAL, false));
+        mapAdapter = new MapAdapter(Overview.this, grid);
+        wholeMapRecyclerView.setAdapter(mapAdapter);
     }
 
     public static Intent getIntent(Context c)
@@ -100,63 +106,80 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
     }
 
 
-    private class Adapter extends RecyclerView.Adapter<Overview.Holder>
-    {
-        private List<Equipment> data;
-        private Activity activity;
-        //SOME DATA HERE
-        public Adapter(Activity activity, List<Equipment> data)
+    private class MapHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private ImageView image1,image2,image3, image4,image5;
+        private Area mapElement;
+        //pass it ViewHolders constructors, this is the base class that will then hold
+        //on to the fragment selector list view hierachy
+        public MapHolder(LayoutInflater inflater, ViewGroup parent) {
+            super(inflater.inflate(R.layout.area_cell, parent, false));
+            itemView.setOnClickListener(this);
+            //sets the recycler views highet at runtime, divide that by the number of cells that can fit
+            int size = parent.getMeasuredHeight() / GameData.COL + 1;
+            ViewGroup.LayoutParams lp = itemView.getLayoutParams();
+            lp.width = size;
+            lp.height = size;
+            image1 = (ImageView)itemView.findViewById(R.id.imagetopleft);
+
+        }
+
+        @Override
+        public void onClick(View view) {
+
+
+
+
+
+        }
+        public void bind(Area s)
         {
-            this.activity = activity;
-            this.data = data;
+            if(!s.isExplored()) //if it hasnt been explored, be black
+            {
+                image1.setImageResource(R.drawable.ic_solid_black);
+            }
+            else if(!s.isTown()) //if its been explored and it is wilderness
+            {
+                image1.setImageResource(R.drawable.ic_tree1);
+            }
+            else if(s.isTown()) // if the place is a town
+            {
+                image1.setImageResource(R.drawable.ic_building1);
+            }
+        }
+    }
+
+    private class MapAdapter extends RecyclerView.Adapter<MapHolder>{
+
+        Area[][] md;
+        private Activity activity;
+
+        public MapAdapter(Activity inActivity, Area[][] mapData)
+        {
+            this.activity = inActivity;
+            md=mapData;
+        }
+
+        @Override
+        public MapHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
+            LayoutInflater layoutInflater = LayoutInflater.from(activity);
+            return new MapHolder(layoutInflater, parent);
+        }
+        @Override
+        public void onBindViewHolder(MapHolder holder, int position) {
+            Area s = mapInstance.getArea(position%mapInstance.COL, position/mapInstance.COL);
+            holder.bind(s);
         }
 
         @Override
         public int getItemCount()
         {
-            return data.size();
-        }
-
-        @Override
-        public void onBindViewHolder(Holder holder, int position)
-        {
-            Item i = data.get(position);
-            holder.bind(i);
-        }
-
-        @Override
-        public Holder onCreateViewHolder(ViewGroup parent, int viewType)
-        {
-            LayoutInflater layoutInflater = LayoutInflater.from(activity);
-            return new Holder(layoutInflater, parent);
+            //return MapData.get();
+            return GameData.COL * GameData.ROW;
         }
 
     }
 
-
-    //VIEW HOLDERS FOR BUY AND SELL
-    private class Holder extends RecyclerView.ViewHolder implements View.OnClickListener
-    {
-
-        Item data;
-        public Holder(LayoutInflater layoutInflater, ViewGroup parent)
-        {
-            super(layoutInflater.inflate(R.layout.area_cell, parent, false));
-
-        }
-
-        public void bind(Item data)
-        {
-            this.data = data;
-
-
-        }
-        @Override
-        public void onClick(View v)
-        {
-
-
-        }
-    }
 
 }

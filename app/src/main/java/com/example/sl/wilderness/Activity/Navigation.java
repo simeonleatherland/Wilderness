@@ -230,10 +230,10 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //update the current row and col of the player
         int currRow = map.getPlayer().getRowLocation();
         int currCol = map.getPlayer().getColLocation();
-
+        Area currentArea = map.getArea(currRow, currCol);
         //get the current area object at the users location
         //make the areainfo fragment responsible for the current area
-        ai_frag.setCurrentArea(map.getArea(currRow, currCol));
+        ai_frag.setCurrentArea(currentArea);
 
         //make area info update the area info that its responsible for
         ai_frag.updateInfo();
@@ -247,6 +247,9 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         if (Double.compare(map.getPlayer().getHealth(), 0.0) == 0) {
             restartGame("YOU DIED - GAME RESTARTING");
         }
+        //update the area in database to be visited and the player
+        currentArea.setExplored();
+        db.updateArea(currentArea);
 
         db.updatePlayer(map.getPlayer());
     }
