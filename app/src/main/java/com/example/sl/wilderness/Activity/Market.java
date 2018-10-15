@@ -229,7 +229,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                 //update the player as the player will now have an extra item
                 db.updatePlayer(currentPlayer);
                 //tell the map that the player has changed
-                mapInstance.setPlayer(db.getCurrPlayer());
+                mapInstance.setPlayer(currentPlayer);
 
                 //tell the adapters that shit changed
                 buyAdapter.notifyDataSetChanged();
@@ -296,7 +296,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                         //update the area and the player in the database... NEED TO FIX THIS
                         db.updateArea(currArea);
                         db.updatePlayer(currentPlayer);
-
+                        mapInstance.setPlayer(currentPlayer);
                         //tell the adapters that shit changed
                         buyAdapter.notifyDataSetChanged();
                         sellAdapter.notifyDataSetChanged();

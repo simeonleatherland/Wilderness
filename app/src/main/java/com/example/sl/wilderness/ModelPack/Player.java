@@ -250,6 +250,7 @@ public class Player {
             setCash((int)(e.getValue()*0.75 + cash));
             //remove from the list of the plyaer
             getEquipment().remove(e);
+            setEquipmentMass(getEquipmentMass() - e.getTypeValue());
 
         }
         else
@@ -295,6 +296,7 @@ public class Player {
         {
             //remove from the list of the player
             getEquipment().remove(e);
+            setEquipmentMass(getEquipmentMass()- e.getTypeValue());
 
         }
         else

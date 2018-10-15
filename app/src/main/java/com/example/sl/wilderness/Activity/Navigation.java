@@ -47,7 +47,6 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
         map = GameData.unpackInstanceFromDB(db);
 
-
         //get the fragment mananger
         FragmentManager fm = getSupportFragmentManager();
         //tries to find the fragment by the id of the framelayout in this activity
@@ -160,10 +159,15 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         }
         else if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_WILDERNESS)
         {
-
+            sb_frag.updateCash(map.getPlayer().getCash());
+            sb_frag.updateEquipmentMass(map.getPlayer().getEquipmentMass());
+            sb_frag.updateHealth(map.getPlayer().getHealth());
         }
         else if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_MARKET)
         {
+            sb_frag.updateCash(map.getPlayer().getCash());
+            sb_frag.updateEquipmentMass(map.getPlayer().getEquipmentMass());
+            sb_frag.updateHealth(map.getPlayer().getHealth());
 
         }
         else if(requestCode == Overview.RESTART_KEY && requestCode == REQUEST_CODE_OVERVIEW)
@@ -325,7 +329,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             //load classfields into database if they exist
             db.load();
             map = map.resetInstance(db);
-
+            map.getPlayer().setCash(100);
             //reset the map data and the player in the STATUS BAR FRAG
             //update the UI with the new reseted values
             sb_frag.updateHealth(map.getPlayer().getHealth());

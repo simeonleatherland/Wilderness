@@ -274,7 +274,7 @@ public class Wilderness extends AppCompatActivity implements StatusBar.StatusBar
                     try
                     {
                         //sell equipment at an increased cost
-                        currentPlayer.sellEquipment((Equipment)data);
+                        currentPlayer.dropEquipment((Equipment)data);
                         sb_frag.updateCash(currentPlayer.getCash());
                         sb_frag.updateEquipmentMass(currentPlayer.getEquipmentMass());
 
