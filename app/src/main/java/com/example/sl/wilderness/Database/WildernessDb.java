@@ -72,7 +72,9 @@ public class WildernessDb {
     public void load()
     {
         dumpCursor();
+        //create a area grid
         grid = new Area[GameData.ROW][GameData.COL];
+        //get the most current player
         currPlayer = retrievePlayer();
         //calculate the highest _id number thats been created so that you dont override items
         //also allows you to update the items specifically

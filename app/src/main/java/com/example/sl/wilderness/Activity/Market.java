@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sl.wilderness.Database.WildernessDb;
+import com.example.sl.wilderness.EquipmentPack.BenKenobi;
+import com.example.sl.wilderness.EquipmentPack.ImprobabilityDrive;
 import com.example.sl.wilderness.EquipmentPack.PortaSmell;
 import com.example.sl.wilderness.Fragments.StatusBar;
 import com.example.sl.wilderness.ModelPack.Area;
@@ -224,17 +226,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                 }
 
 
-                //update the area and the player in the database... NEED TO FIX THIS
-                db.updateArea(currArea);
-                //update the player as the player will now have an extra item
-                db.updatePlayer(currentPlayer);
-                //tell the map that the player has changed
-                mapInstance.setPlayer(currentPlayer);
-
-                //tell the adapters that shit changed
-                buyAdapter.notifyDataSetChanged();
-                sellAdapter.notifyDataSetChanged();
-                db.dumpCursor();
+                updateAreaData();
             }
             catch(IllegalArgumentException i)
             {
@@ -263,6 +255,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
             sell = (Button)itemView.findViewById(R.id.sellbutton);
             use = (Button)itemView.findViewById(R.id.usebutton);
             sell.setOnClickListener(this);
+            use.setOnClickListener(this);
         }
 
         public void bind(Item data)
@@ -293,14 +286,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                         data.setRow(currArea.getRow());
                         data.setCol(currArea.getCol());
 
-                        //update the area and the player in the database... NEED TO FIX THIS
-                        db.updateArea(currArea);
-                        db.updatePlayer(currentPlayer);
-                        mapInstance.setPlayer(currentPlayer);
-                        //tell the adapters that shit changed
-                        buyAdapter.notifyDataSetChanged();
-                        sellAdapter.notifyDataSetChanged();
-                        db.dumpCursor();
+
+                        updateAreaData();
 
                     }
                     catch(IllegalArgumentException i)
@@ -310,10 +297,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                     break;
                 case R.id.usebutton: //use an item
                     //do some stuff here to use the item
-                    if(data.getType() == PortaSmell.TYPE)
-                    {
-                        startActivityForResult(SmellOScope.getIntent(Market.this), REQUEST_CODE_SMELL);
-                    }
+                    useItem(data);
                     break;
 
             }
@@ -321,6 +305,55 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
 
         }
     }
+
+    private void useItem(Item data) {
+        currentPlayer.getEquipment().remove((Equipment)data);
+        if(data.getType() == PortaSmell.TYPE)
+        {
+            startActivityForResult(SmellOScope.getIntent(Market.this), REQUEST_CODE_SMELL);
+        }
+        else if(data.getType() == ImprobabilityDrive.TYPE)
+        {
+
+        }
+        else if(data.getType() == BenKenobi.TYPE)
+        {
+            List<Item> l = currArea.getItems();
+            //pickup everything for free
+            for(int ii = 0; ii < currArea.getItems().size(); ii++)
+            {
+                if(l.get(ii).getType() == Food.TYPE)
+                {   //increase the health of the player
+                    currentPlayer.pickupFood((Food)l.get(ii));
+                }
+                else
+                {
+                    //add the players item
+                    currentPlayer.pickupEquipment((Equipment)l.get(ii));
+                    //set the data to no longer held and the row and column
+                    data.setHeld(true);
+                    data.setRow(currArea.getRow());
+                    data.setCol(currArea.getCol());
+
+                }
+            }
+            currArea.getItems().clear();
+            updateAreaData();
+        }
+    }
+
+    public void updateAreaData()
+    {
+        //update the area and the player in the database... NEED TO FIX THIS
+        db.updateArea(currArea);
+        db.updatePlayer(currentPlayer);
+        mapInstance.setPlayer(currentPlayer);
+        //tell the adapters that shit changed
+        buyAdapter.notifyDataSetChanged();
+        sellAdapter.notifyDataSetChanged();
+        db.dumpCursor();
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent returnIntent)
