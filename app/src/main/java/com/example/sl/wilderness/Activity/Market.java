@@ -120,7 +120,10 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
         {
             return data.size();
         }
-
+        public void updateData(List<Item> list)
+        {
+            data = list;
+        }
         @Override
         public void onBindViewHolder(BuyHolder holder, int position)
         {
@@ -192,6 +195,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
             description.setText("Type: " + data.getType());
 
         }
+
         @Override
         public void onClick(View v)
         {
@@ -314,7 +318,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
         }
         else if(data.getType() == ImprobabilityDrive.TYPE)
         {
-
+            currentPlayer.dropEquipment((Equipment)data);
+            reGenerateMap(currentPlayer);
         }
         else if(data.getType() == BenKenobi.TYPE)
         {
@@ -325,6 +330,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                 if(l.get(ii).getType() == Food.TYPE)
                 {   //increase the health of the player
                     currentPlayer.pickupFood((Food)l.get(ii));
+
                 }
                 else
                 {
@@ -339,6 +345,51 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
             }
             currArea.getItems().clear();
             updateAreaData();
+        }
+    }
+
+    private void reGenerateMap(Player currentPlayer) {
+        //clear the database is easier then regenerating everything and updating everything
+        if (db.clearDatabase()) {
+
+            //create a new database
+            db = new WildernessDb(Market.this);
+            //load classfields into database if they exist
+            db.load();
+
+            //reset the everything
+            GameData map = mapInstance.resetInstance(db);
+            //set the player to the map instance
+            map.setPlayer(currentPlayer);
+            //set the player in the database
+            db.updatePlayer(map.getPlayer());
+            db.dumpCursor();
+            //reset the map data and the player in the STATUS BAR FRAG
+            //update the UI with the new reseted values
+            sb_frag.updateHealth(map.getPlayer().getHealth());
+            sb_frag.updateCash(map.getPlayer().getCash());
+            sb_frag.updateEquipmentMass(map.getPlayer().getEquipmentMass());
+
+
+            //get the current area
+            int row = currentPlayer.getRowLocation();
+            int col = currentPlayer.getColLocation();
+            currArea = map.getArea(row, col);
+
+            //update the buy data in the adapter
+            buyAdapter.updateData(currArea.getItems());
+
+           /* buyAdapter = new BuyAdapter(this, currArea.getItems());
+            buyRecyclerView.setAdapter(buyAdapter); */
+
+            //notify the adapters that stuff changed
+            sellAdapter.notifyDataSetChanged();
+            buyAdapter.notifyDataSetChanged();
+
+            //tell the user it was updated
+            Toast.makeText(this, "Map randomly regenerated", Toast.LENGTH_SHORT).show();
+            //set the classfield to the new map
+            mapInstance = map;
         }
     }
 

@@ -23,7 +23,7 @@ public class GameData {
     //static instance of the class to keep consistent
     private static GameData instance;
 
-    public static final int ROW = 3;
+    public static final int ROW = 4;
     public static final int COL = 3;
 
     private WildernessDb db;
@@ -170,6 +170,21 @@ public class GameData {
         itemList9.add(new Axe("Axe", 9,4,2,2,false));
         Area area9 = new Area(false, itemList9, "some area", false, false, 2,2);
 
+
+        ArrayList<Item> itemList10 = new ArrayList<>();
+        itemList10.add(new Food("Bread", 3, 3,3,0,false));
+        itemList10.add(new Axe("Axe", 9,4,3,0,false));
+        Area area10 = new Area(false, itemList10, "some area", false, false, 3,0);
+
+        ArrayList<Item> itemList11 = new ArrayList<>();
+        itemList11.add(new Food("Bread", 3, 3,3,1,false));
+        itemList11.add(new Axe("Axe", 9,4,3,1,false));
+        Area area11 = new Area(false, itemList11, "some area", false, false, 3,1);
+
+        ArrayList<Item> itemList12 = new ArrayList<>();
+        itemList12.add(new Food("Bread", 3, 3,3,2,false));
+        itemList12.add(new Axe("Axe", 9,4,3,2,false));
+        Area area12 = new Area(false, itemList12, "some area", false, false, 3,2);
         grid[0][0]= area1;
 
         grid[0][1]= area2;
@@ -180,6 +195,12 @@ public class GameData {
         grid[2][0]= area7;
         grid[2][1]= area8;
         grid[2][2]= area9;
+
+        grid[3][0] = area10;
+        grid[3][1] = area11;
+        grid[3][2] = area12;
+
+
 
     }
 
@@ -250,6 +271,8 @@ public class GameData {
 
     public Area getArea(int row, int col)
     {
+        int i = row;
+        int j = col;
         return grid[row][col];
     }
 

@@ -385,6 +385,7 @@ public class Wilderness extends AppCompatActivity implements StatusBar.StatusBar
 
             //tell the user it was updated
             Toast.makeText(this, "Map randomly regenerated", Toast.LENGTH_SHORT).show();
+            //set the classfield to the new map
             mapInstance = map;
         }
     }

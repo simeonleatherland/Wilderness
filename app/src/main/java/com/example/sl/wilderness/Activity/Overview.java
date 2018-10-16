@@ -86,7 +86,7 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
     private void createRecyclerView(Area[][] grid) {
 
         wholeMapRecyclerView = (RecyclerView) findViewById(R.id.rvoverview);
-        wholeMapRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(),GameData.COL, GridLayoutManager.HORIZONTAL, false));
+        wholeMapRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(),GameData.ROW, GridLayoutManager.HORIZONTAL, false));
         mapAdapter = new MapAdapter(Overview.this, grid);
         wholeMapRecyclerView.setAdapter(mapAdapter);
     }
@@ -116,7 +116,7 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
             super(inflater.inflate(R.layout.area_cell, parent, false));
             itemView.setOnClickListener(this);
             //sets the recycler views highet at runtime, divide that by the number of cells that can fit
-            int size = parent.getMeasuredHeight() / GameData.COL + 1;
+            int size = parent.getMeasuredHeight() / GameData.ROW + 1;
             ViewGroup.LayoutParams lp = itemView.getLayoutParams();
             lp.width = size;
             lp.height = size;
@@ -136,7 +136,7 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
         {
             if(!s.isExplored()) //if it hasnt been explored, be black
             {
-                image1.setImageResource(R.drawable.ic_solid_black);
+                image1.setImageResource(R.drawable.blackquestion);
             }
             else if(!s.isTown()) //if its been explored and it is wilderness
             {
@@ -168,7 +168,7 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
         }
         @Override
         public void onBindViewHolder(MapHolder holder, int position) {
-            Area s = mapInstance.getArea(position%mapInstance.COL, position/mapInstance.COL);
+            Area s = mapInstance.getArea(position%mapInstance.ROW, position/mapInstance.ROW);
             holder.bind(s);
         }
 
@@ -176,7 +176,8 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
         public int getItemCount()
         {
             //return MapData.get();
-            return GameData.COL * GameData.ROW;
+            int i = GameData.ROW * GameData.COL;
+            return i;
         }
 
     }

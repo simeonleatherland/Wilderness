@@ -168,7 +168,7 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
             for(int jj = 0; jj < smellCol; jj++)
             {
                 //calculate the equivilent row and col of the grid array
-                int gridRow = (playerRow-left)+ii;
+                int gridRow = (playerRow-left)+ii; //NEED TO USE RIGHT IN HERE
                 int gridCol = (playerCol-up) +jj;
                 //access the grid array and fill up the smell grid to display
                 smellGrid[ii][jj] = grid[gridRow][gridCol];

@@ -256,6 +256,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         db.updateArea(currentArea);
 
         db.updatePlayer(map.getPlayer());
+        db.dumpCursor();
     }
 
     public void resetAreaFragData() {
@@ -305,7 +306,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         int currRow = map.getPlayer().getRowLocation();
         int currCol = map.getPlayer().getColLocation();
         //get the current area
-
+        map.getArea(currRow,currCol).setExplored();
         //set the current area
         ai_frag.setCurrentArea(map.getArea(currRow, currCol));
 
