@@ -356,7 +356,6 @@ public class Wilderness extends AppCompatActivity implements StatusBar.StatusBar
 
             //reset the everything
             GameData map = mapInstance.resetInstance(db);
-
             //set the player to the map instance
             map.setPlayer(currentPlayer);
             //set the player in the database
@@ -372,18 +371,21 @@ public class Wilderness extends AppCompatActivity implements StatusBar.StatusBar
             //get the current area
             int row = currentPlayer.getRowLocation();
             int col = currentPlayer.getColLocation();
-            currArea = mapInstance.getArea(row, col);
+            currArea = map.getArea(row, col);
 
             //update the buy data in the adapter
             buyAdapter.updateData(currArea.getItems());
 
+           /* buyAdapter = new BuyAdapter(this, currArea.getItems());
+            buyRecyclerView.setAdapter(buyAdapter); */
+
             //notify the adapters that stuff changed
-            buyAdapter.notifyDataSetChanged();
             sellAdapter.notifyDataSetChanged();
+            buyAdapter.notifyDataSetChanged();
 
             //tell the user it was updated
             Toast.makeText(this, "Map randomly regenerated", Toast.LENGTH_SHORT).show();
-
+            mapInstance = map;
         }
     }
 
