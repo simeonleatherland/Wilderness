@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sl.wilderness.Database.WildernessDb;
+import com.example.sl.wilderness.Fragments.AreaInfo;
 import com.example.sl.wilderness.Fragments.StatusBar;
 import com.example.sl.wilderness.ModelPack.Area;
 import com.example.sl.wilderness.ModelPack.Equipment;
@@ -38,6 +39,7 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
     private StatusBar sb_frag;
     private RecyclerView wholeMapRecyclerView;
     private MapAdapter mapAdapter;
+    private AreaInfo ai_frag;
 
     public static final int RESTART_KEY = 12;
 
@@ -47,27 +49,10 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
 
-        //retrieve the map and the database from the game data
-        mapInstance = GameData.getInstance();
-        //get reference locally for the database
-        db = mapInstance.getDatabase();
+        //unpacks game data and database
+        setUpOverview();
 
-        //retrieve the current player and the current area
-        currentPlayer = mapInstance.getPlayer();
-
-
-
-        //setup the status bar fragment
-        FragmentManager fm = getSupportFragmentManager();
-        sb_frag = (StatusBar)fm.findFragmentById(R.id.statusmarket);
-
-        if(sb_frag == null)
-        {
-            sb_frag = new StatusBar();
-            fm.beginTransaction().add(R.id.statusmarket, sb_frag).commit();
-        }
-
-        sb_frag.setupInitial(currentPlayer);
+        setupFragments();
 
         //create the leave button
         Button leave = (Button)findViewById(R.id.leavebutton);
@@ -82,6 +67,47 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
         createRecyclerView(mapInstance.getGrid());
 
     }
+
+    private void setupFragments() {
+        //make the areainfo fragment responsible for the current area
+        //setup the status bar fragment
+        FragmentManager fm = getSupportFragmentManager();
+        sb_frag = (StatusBar)fm.findFragmentById(R.id.statusmarket);
+
+        if(sb_frag == null)
+        {
+            sb_frag = new StatusBar();
+            fm.beginTransaction().add(R.id.statusmarket, sb_frag).commit();
+        }
+        sb_frag.setupInitial(currentPlayer);
+
+        ai_frag = (AreaInfo) fm.findFragmentById(R.id.overviewlayout);
+
+        //try find the fragment, if it doesnt exist then create it
+        if (ai_frag == null) {
+            //create the fragment if not exist
+            ai_frag = new AreaInfo();
+            fm.beginTransaction().add(R.id.overviewlayout, ai_frag).commit();
+        }
+
+        ai_frag.setCurrentArea(null);
+
+
+
+
+    }
+
+    private void setUpOverview() {
+        //retrieve the map and the database from the game data
+        mapInstance = GameData.getInstance();
+        //get reference locally for the database
+        db = mapInstance.getDatabase();
+
+        //retrieve the current player and the current area
+        currentPlayer = mapInstance.getPlayer();
+
+    }
+
 
     private void createRecyclerView(Area[][] grid) {
 
@@ -122,18 +148,28 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
             lp.height = size;
             image1 = (ImageView)itemView.findViewById(R.id.imagetopleft);
 
+
         }
 
         @Override
         public void onClick(View view) {
 
+            if(mapElement.isExplored()) //if it hasnt been explored, be black
+            {
+                //set the current area of the frag
+                ai_frag.setCurrentArea(mapElement);
+                //update the info
+                ai_frag.updateInfo();
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(), "You cant see that area", Toast.LENGTH_SHORT).show();
 
-
-
-
+            }
         }
         public void bind(Area s)
         {
+            mapElement = s;
             if(!s.isExplored()) //if it hasnt been explored, be black
             {
                 image1.setImageResource(R.drawable.blackquestion);

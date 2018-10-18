@@ -52,25 +52,35 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
         error = (TextView) view.findViewById(R.id.error);
         checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         checkBox.setOnClickListener(this);
-        if(currentArea.isStarred())
+
+        if(currentArea != null)
         {
-            checkBox.setChecked(true);
+            if(currentArea.isStarred())
+            {
+                checkBox.setChecked(true);
+            }
+            else
+            {
+                checkBox.setChecked(false);
+            }
+
+            desc.setText("Description: " + currentArea.getDescription());
+            curr.setText("Current Area: Row" + currentArea.getRow()  + " Col" + currentArea.getCol());
+            if(currentArea.isTown())
+            {
+                type.setText("Town");
+            }
+            else
+            {
+                type.setText("Wilderness");
+            }
         }
         else
         {
-            checkBox.setChecked(false);
+            curr.setText("Please select a area first");
+            desc.setText("before you can see area info");
         }
 
-        desc.setText("Description: " + currentArea.getDescription());
-        curr.setText("Current Area: Row" + currentArea.getRow()  + " Col" + currentArea.getCol());
-        if(currentArea.isTown())
-        {
-            type.setText("Town");
-        }
-        else
-        {
-            type.setText("Wilderness");
-        }
 
 
         return view;
@@ -84,7 +94,6 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
 
     public void updateInfo()
     {
-
         desc.setText("Description: " + currentArea.getDescription());
         curr.setText("Current Area: Row" + currentArea.getRow()  + " Col" + currentArea.getCol());
         if(currentArea.isTown())
@@ -104,6 +113,7 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
         {
             checkBox.setChecked(false);
         }
+
     }
 
     public void displayError(String inError)
@@ -115,30 +125,33 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v)
     {
-        switch (v.getId())
+        if(currentArea != null)
         {
-            case R.id.checkBox:
-                if(currentArea.isStarred())
-                {
-                    currentArea.clearStarred();
-                }
-                else {
-                    currentArea.setStarred();
-                }
-                checkBox.setChecked(currentArea.isStarred());
-                ((OnDescriptionClickedListener) activity).updateAreaInDB(currentArea);
-                break;
-            case R.id.desc:
-                try
-                {
-                    ((OnDescriptionClickedListener) activity).editDescription();
+            switch (v.getId())
+            {
+                case R.id.checkBox:
+                    if(currentArea.isStarred())
+                    {
+                        currentArea.clearStarred();
+                    }
+                    else {
+                        currentArea.setStarred();
+                    }
+                    checkBox.setChecked(currentArea.isStarred());
+                    ((OnDescriptionClickedListener) activity).updateAreaInDB(currentArea);
+                    break;
+                case R.id.desc:
+                    try
+                    {
+                        ((OnDescriptionClickedListener) activity).editDescription();
 
-                }
-                catch (ClassCastException e)
-                {
-                    Log.i("Class cast exception", "Something happened");
-                }
-                break;
+                    }
+                    catch (ClassCastException e)
+                    {
+                        Log.i("Class cast exception", "Something happened");
+                    }
+                    break;
+            }
         }
     }
 
@@ -149,6 +162,8 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
         ((OnDescriptionClickedListener) activity).updateAreaInDB(currentArea);
 
     }
+
+
 
 
     //INTERFACE SO THAT ACTIVITYT AND FRAGMENT CAN COMMUNICATE
