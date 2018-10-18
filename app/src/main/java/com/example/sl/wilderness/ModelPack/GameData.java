@@ -18,6 +18,7 @@ import com.example.sl.wilderness.EquipmentPack.Torch;
 import com.example.sl.wilderness.EquipmentPack.Waterbottle;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameData {
     //game data grid that holds all the data thats on the map
@@ -212,6 +213,73 @@ public class GameData {
 
     public void randomRegenerate()
     {
+        //boolean to only drop one of each of the winning items
+        boolean jadeDrop = false, iceDrop = false, mapDrop = false, smellDrop = false, improvDrop = false, benkenobiDrop = false;
+        int num = getRandomNumberInRange(0,150);
+        for(int ii = 0; ii < ROW; ii++)
+        {
+            for(int jj = 0; jj < COL; jj++)
+            {
+                ArrayList<Item> itemList1 = new ArrayList<>();
+                //generate how many items in an area
+                int numItems = getRandomNumberInRange(1, 5);
+                for(int kk = 0; kk< numItems; kk++)
+                {
+                    //generate a number to generate
+                    num = getRandomNumberInRange(0, 150);
+                    //if they have all been filled, only fill the rest with the other stuff
+                    if(!(jadeDrop && iceDrop &&  mapDrop && smellDrop && improvDrop && benkenobiDrop))
+                    {
+                        if(num >= 0 && num < 10)
+                        {
+                            itemList1.add(new PortaSmell("portasmell", 3, 2,ii,jj,false));
+                            smellDrop = true;
+                        }
+                        else if(num >= 10 && num < 20)
+                        {
+                            itemList1.add(new BenKenobi("Backpack", 7,4,0,0,false));
+                            benkenobiDrop = true;
+                        }
+                        else if(num >= 20 && num < 30)
+                        {
+                            itemList1.add(new JadeMonkey("Backpack", 7,4,0,0,false));
+                            jadeDrop = true;
+                        }
+                        else if(num >= 30 && num < 40)
+                        {
+                            itemList1.add(new IceScraper("Backpack", 7,4,0,0,false));
+                            iceDrop = true;
+                        }
+                        else if(num >= 40 && num < 50)
+                        {
+                            itemList1.add(new Roadmap("Backpack", 7,4,0,0,false));
+                            mapDrop = true;
+                        }
+                        else if(num >= 50 && num < 60)
+                        {
+                            itemList1.add(new ImprobabilityDrive("Backpack", 7,4,0,0,false));
+                            improvDrop = true;
+                        }
+                    }
+                    else
+                    {
+
+                    }
+
+                }
+
+                if(num < 75)//75% chance of a town
+                {
+                    Area area1 = new Area(true, itemList1, "some area", false, false, ii, jj);
+                }
+                else
+                {
+                    Area area1 = new Area(false, itemList1, "some area", false, false, ii, jj);
+                }
+            }
+
+        }
+
         ArrayList<Item> itemList1 = new ArrayList<>();
         itemList1.add(new PortaSmell("portasmell", 3, 2,0,0,false));
         itemList1.add(new BenKenobi("Backpack", 7,4,0,0,false));
@@ -287,6 +355,14 @@ public class GameData {
         grid[row][col] = a;
     }
 
+    private int getRandomNumberInRange(int min, int max) {
 
+        if (min >= max) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
+
+        Random r = new Random();
+        return r.nextInt((max - min) + 1) + min;
+    }
 
 }
