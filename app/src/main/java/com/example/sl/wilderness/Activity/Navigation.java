@@ -12,12 +12,19 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sl.wilderness.Database.WildernessDb;
+import com.example.sl.wilderness.EquipmentPack.IceScraper;
+import com.example.sl.wilderness.EquipmentPack.JadeMonkey;
+import com.example.sl.wilderness.EquipmentPack.Roadmap;
 import com.example.sl.wilderness.Fragments.AreaInfo;
 import com.example.sl.wilderness.Fragments.StatusBar;
 import com.example.sl.wilderness.ModelPack.Area;
+import com.example.sl.wilderness.ModelPack.Equipment;
 import com.example.sl.wilderness.ModelPack.GameData;
+import com.example.sl.wilderness.ModelPack.Item;
 import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
+
+import java.util.List;
 
 public class Navigation extends AppCompatActivity implements AreaInfo.OnDescriptionClickedListener, StatusBar.StatusBarObserver {
 
@@ -162,12 +169,14 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             sb_frag.updateCash(map.getPlayer().getCash());
             sb_frag.updateEquipmentMass(map.getPlayer().getEquipmentMass());
             sb_frag.updateHealth(map.getPlayer().getHealth());
+            checkIfTheyWon(map.getPlayer());
         }
         else if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_MARKET)
         {
             sb_frag.updateCash(map.getPlayer().getCash());
             sb_frag.updateEquipmentMass(map.getPlayer().getEquipmentMass());
             sb_frag.updateHealth(map.getPlayer().getHealth());
+            checkIfTheyWon(map.getPlayer());
 
         }
         else if(requestCode == Overview.RESTART_KEY && requestCode == REQUEST_CODE_OVERVIEW)
@@ -275,22 +284,34 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         db.updatePlayer(map.getPlayer());
     }
 
-    /*
-    private void checkIfTheyWon(Player inMainCharacter)
+    public void checkIfTheyWon(Player inMainCharacter)
     {
-        List<Equipment> copyOfList = inMainCharacter.getEquipment();
-        List<String> listOfItemAsStrings = new LinkedList<>();
-        for(Equipment o : copyOfList)
+        List<Equipment> m = inMainCharacter.getEquipment();
+        boolean jadeMonkey = false, roadmap = false, iceScrapper= false;
+
+        for(Equipment e: m)
         {
-            listOfItemAsStrings.add(o.getDesc());
+            if(e.getType().equals(JadeMonkey.TYPE))
+            {
+                jadeMonkey = true;
+            }
+            else if(e.getType().equals(IceScraper.TYPE))
+            {
+                iceScrapper = true;
+            }
+            else if(e.getType().equals(Roadmap.TYPE))
+            {
+                roadmap = true;
+            }
         }
-        if(listOfItemAsStrings.contains("Backpack") && listOfItemAsStrings.contains("Knife") && listOfItemAsStrings.contains("Shovel"))
+
+        if(jadeMonkey && roadmap && iceScrapper)
         {
-            restart("You have WON the game -> the game has now restarted");
+            Toast.makeText(this, "YOU WON THE GAME", Toast.LENGTH_SHORT).show();
         }
+
     }
 
-    */
 
 
     private void setupViews() {

@@ -7,9 +7,12 @@ import com.example.sl.wilderness.EquipmentPack.Backpack;
 import com.example.sl.wilderness.EquipmentPack.BenKenobi;
 import com.example.sl.wilderness.EquipmentPack.Compass;
 import com.example.sl.wilderness.EquipmentPack.Gun;
+import com.example.sl.wilderness.EquipmentPack.IceScraper;
 import com.example.sl.wilderness.EquipmentPack.ImprobabilityDrive;
+import com.example.sl.wilderness.EquipmentPack.JadeMonkey;
 import com.example.sl.wilderness.EquipmentPack.Knife;
 import com.example.sl.wilderness.EquipmentPack.PortaSmell;
+import com.example.sl.wilderness.EquipmentPack.Roadmap;
 import com.example.sl.wilderness.EquipmentPack.Shovel;
 import com.example.sl.wilderness.EquipmentPack.Torch;
 import com.example.sl.wilderness.EquipmentPack.Waterbottle;
@@ -132,8 +135,10 @@ public class GameData {
 
 
         ArrayList<Item> itemList2 = new ArrayList<>();
-        itemList2.add(new Food("Watermelon", 2,5,0,1,false));
-        itemList2.add(new Shovel("Shovel", 6,5,0,1,false));
+        itemList2.add(new JadeMonkey("Watermelon", 2,5,0,1,false));
+        itemList2.add(new Roadmap("Shovel", 6,5,0,1,false));
+        itemList2.add(new IceScraper("Shovel", 6,5,0,1,false));
+
         Area area2 = new Area(true, itemList2, "some area", false, false, 0,1);
 
         ArrayList<Item> itemList3 = new ArrayList<>();
