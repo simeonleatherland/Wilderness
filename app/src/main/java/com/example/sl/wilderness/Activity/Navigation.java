@@ -331,6 +331,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             db.load();
             map = map.resetInstance(db);
             map.getPlayer().setCash(100);
+            map.getArea(map.getPlayer().getRowLocation(),map.getPlayer().getColLocation()).setExplored();
             //reset the map data and the player in the STATUS BAR FRAG
             //update the UI with the new reseted values
             sb_frag.updateHealth(map.getPlayer().getHealth());

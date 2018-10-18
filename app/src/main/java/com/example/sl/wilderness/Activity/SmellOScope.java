@@ -25,6 +25,8 @@ import com.example.sl.wilderness.ModelPack.Item;
 import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,25 +36,26 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
     private GameData mapInstance;
     private WildernessDb db;
     private RecyclerView buyRecyclerView;
+    private Player currentPlayer;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_smell_oscope);
-        //retrieve the map and the database from the game data
+        //retrieve -the map and the database from the game data
         mapInstance = GameData.getInstance();
         db = mapInstance.getDatabase();
 
 
+
         //retrieve the current player and the current area
-        Player currentPlayer = mapInstance.getPlayer();
+        currentPlayer = mapInstance.getPlayer();
         int row = currentPlayer.getRowLocation();
         int col = currentPlayer.getColLocation();
         Area[][] grid = mapInstance.getGrid();
 
-
-        Area[][] smellGrid = calcArrayToDispaly(grid, row, col);
+        List<Item> smellList = calcArrayToDispaly(grid, row, col);
         //get and load the database
         FragmentManager fm = getSupportFragmentManager();
         StatusBar sb_frag = (StatusBar)fm.findFragmentById(R.id.statucoverview);
@@ -70,30 +73,31 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
         leaves.setOnClickListener(new View.OnClickListener() {
                                      @Override
                                      public void onClick(View v) {
-
+                                         setResult(RESULT_OK, null);
+                                         finish();
                                      }
                                  }
 
         );
 
-        createRecyclerView(currentPlayer.getEquipment(),smellGrid);
+        createRecyclerView(smellList);
 
     }
 
-    private Area[][] calcArrayToDispaly(Area[][] grid, int playerRow, int playerCol) {
-        int smellRow, smellCol;//row and col of the area near by that can be seen by the smelloscope
+    private List<Item> calcArrayToDispaly(Area[][] grid, int playerRow, int playerCol) {
+        int smellRowSize, smellColSize;//row and col of the area near by that can be seen by the smelloscope
 
         int left = 0,right=0,up=0,down=0;//this is the count of how big the array is to the left, right and up and down
         //such that i can then generate an array of the size
         //LEFT
         try{
-            Area a = grid[playerRow-2][playerCol];
+            Area a = grid[playerRow][playerCol-2];
             left = 2; // there is areas 2 spaces to the left of the player
         }
         catch(IndexOutOfBoundsException e)
         {
             try{
-                Area a = grid[playerRow-1][playerCol];
+                Area a = grid[playerRow][playerCol-1];
                 //player is on the edge of the map to the left
                 left = 1; // there is areas 1 space to the left of the player
             }
@@ -104,13 +108,13 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
         }
         //RIGHT
         try{
-            Area a = grid[playerRow+2][playerCol];
+            Area a = grid[playerRow][playerCol+2];
             right = 2; // there is areas 2 spaces to the left of the player
         }
         catch(IndexOutOfBoundsException e)
         {
             try{
-                Area a = grid[playerRow+1][playerCol];
+                Area a = grid[playerRow][playerCol+1];
                 //player is on the edge of the map to the left
                 right = 1; // there is areas 1 space to the left of the player
             }
@@ -122,13 +126,13 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
 
         //UP
         try{
-            Area a = grid[playerRow][playerCol-2];
+            Area a = grid[playerRow-2][playerCol];
             up = 2; // there is areas 2 spaces to the left of the player
         }
         catch(IndexOutOfBoundsException e)
         {
             try{
-                Area a = grid[playerRow][playerCol-1];
+                Area a = grid[playerRow-1][playerCol];
                 //player is on the edge of the map to the left
                 up = 1; // there is areas 1 space to the left of the player
             }
@@ -139,13 +143,13 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
         }
         //down
         try{
-            Area a = grid[playerRow][playerCol+2];
-            down = 2; // there is areas 2 spaces to the left of the player
+            Area a = grid[playerRow+2][playerCol];
+            down = 2; // there is areas 2 spaces down of the player
         }
         catch(IndexOutOfBoundsException e)
         {
             try{
-                Area a = grid[playerRow][playerCol+2];
+                Area a = grid[playerRow+1][playerCol];
                 //player is on the edge of the map to the left
                 down = 1; // there is areas 1 space to the left of the player
 
@@ -156,29 +160,36 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
             }
         }
 
-        //total them up, plus one for the player itself
-        smellRow = left+right+1;
-        smellCol= up+down+1;
+        //total them up, plus one for the player itself, size of the new array
+        smellRowSize = up+down+1; // size of the rows, how many rows
+        smellColSize = left+right+1; //how many columns
+
 
         //create the grid
-        Area[][] smellGrid = new Area[smellRow][smellCol];
+        List<Item> smellGrid = new ArrayList<>();
         //populate the grid
-        for(int ii = 0; ii < smellRow; ii++)
+        for(int ii = 0; ii < smellRowSize; ii++)
         {
-            for(int jj = 0; jj < smellCol; jj++)
+            for(int jj = 0; jj < smellColSize; jj++)
             {
-                //calculate the equivilent row and col of the grid array
-                int gridRow = (playerRow-left)+ii; //NEED TO USE RIGHT IN HERE
-                int gridCol = (playerCol-up) +jj;
-                //access the grid array and fill up the smell grid to display
-                smellGrid[ii][jj] = grid[gridRow][gridCol];
+                //calculate the equivalent row and col of the grid array, normalise them
+                int gridRow = (playerRow-up)+ii;
+                int gridCol = (playerCol-left) +jj;
+                for(Item i : grid[gridRow][gridCol].getItems())
+                {
+                    //access the grid array and fill up the smell grid to display
+                    smellGrid.add(i);
+                }
+
+
+
             }
         }
         return smellGrid;
     }
 
 
-    private void createRecyclerView(List<Equipment> playerItems, Area[][] area) {
+    private void createRecyclerView(List<Item> area) {
         buyRecyclerView = (RecyclerView) findViewById(R.id.rvsmell);
         buyRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL, false));
         
@@ -190,10 +201,10 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
 
     private class Adapter extends RecyclerView.Adapter<Holder>
     {
-        private Area[][]  data;
+        private List<Item>  data;
         private Activity activity;
         //SOME DATA HERE
-        public Adapter(Activity activity, Area[][] data)
+        public Adapter(Activity activity, List<Item> data)
         {
             this.activity = activity;
             this.data = data;
@@ -202,13 +213,13 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
         @Override
         public int getItemCount()
         {
-            return data.length * data[0].length;
+            return data.size();
         }
 
         @Override
         public void onBindViewHolder(Holder holder, int position)
         {
-           Item i = data[position%data.length][position/data.length].getItems().get(0);
+           Item i = data.get(position);
            holder.bind(i);
         }
 
@@ -233,20 +244,44 @@ public class SmellOScope extends AppCompatActivity implements StatusBar.StatusBa
             desc = (TextView) itemView.findViewById(R.id.name);
             row = (TextView) itemView.findViewById(R.id.row);
             col = (TextView) itemView.findViewById(R.id.col);
-
-
         }
 
         public void bind(Item data)
         {
             this.data = data;
-            int row = 0;
-            int col = 0;
+            int currRow = data.getRow();
+            int currCol = data.getCol();
+            int playerRow = currentPlayer.getRowLocation();
+            int playerCol = currentPlayer.getColLocation();
+
             desc.setText(data.getType());
-            /*row.setText(row + "east");
-            row.setText(row + "west");
-            col.setText(col + "north");
-            col.setText(col + "south");*/
+            
+            if(playerCol > currCol) // if the item is to the left the player
+            {
+                col.setText((playerCol-currCol) + " West");
+            }
+            else if(playerCol < currCol)// if the player is to the right
+            {
+                col.setText((currCol -  playerCol )+ " East");
+            }
+            else
+            {
+                col.setText("0 West");
+            }
+
+            if(playerRow > currRow) //if the player is higher than the item
+            {
+                row.setText((playerRow - currRow) + " North");
+            }
+            else if(playerRow < currRow)//if the item is north
+            {
+                row.setText((currRow- playerRow ) + " South");
+            }
+            else
+            {
+                row.setText("0 North");
+
+            }
 
         }
         

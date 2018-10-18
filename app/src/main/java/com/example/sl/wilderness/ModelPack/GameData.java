@@ -9,6 +9,7 @@ import com.example.sl.wilderness.EquipmentPack.Compass;
 import com.example.sl.wilderness.EquipmentPack.Gun;
 import com.example.sl.wilderness.EquipmentPack.ImprobabilityDrive;
 import com.example.sl.wilderness.EquipmentPack.Knife;
+import com.example.sl.wilderness.EquipmentPack.PortaSmell;
 import com.example.sl.wilderness.EquipmentPack.Shovel;
 import com.example.sl.wilderness.EquipmentPack.Torch;
 import com.example.sl.wilderness.EquipmentPack.Waterbottle;
@@ -123,7 +124,7 @@ public class GameData {
     public void generateMap()
     {
         ArrayList<Item> itemList1 = new ArrayList<>();
-        itemList1.add(new Food("Apples", 3, 2,0,0,false));
+        itemList1.add(new PortaSmell("Apples", 3, 2,0,0,false));
         itemList1.add(new BenKenobi("Backpack", 7,4,0,0,false));
         itemList1.add(new Knife("Knife", 7,4,0,0,false));
         Area area1 = new Area(true, itemList1, "some area", false, false, 0,0);
@@ -207,7 +208,7 @@ public class GameData {
     public void randomRegenerate()
     {
         ArrayList<Item> itemList1 = new ArrayList<>();
-        itemList1.add(new Food("Apples", 3, 2,0,0,false));
+        itemList1.add(new PortaSmell("portasmell", 3, 2,0,0,false));
         itemList1.add(new BenKenobi("Backpack", 7,4,0,0,false));
         itemList1.add(new Knife("Knife", 7,4,0,0,false));
         Area area1 = new Area(true, itemList1, "some area", false, false, 0,0);

@@ -310,11 +310,13 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
         }
     }
 
+    //PUT THIS INSIDE INDIVIDUAL ACTIVITIES
     private void useItem(Item data) {
         currentPlayer.getEquipment().remove((Equipment)data);
         if(data.getType() == PortaSmell.TYPE)
         {
             startActivityForResult(SmellOScope.getIntent(Market.this), REQUEST_CODE_SMELL);
+
         }
         else if(data.getType() == ImprobabilityDrive.TYPE)
         {
@@ -415,6 +417,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
         {
             restartGame("Game will restart now");
         }
+        updateAreaData(); //NEED TO FIX THIS
+
 
     }
     public static Intent getIntent(Context c)
