@@ -30,7 +30,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
 
     public static final int REQUEST_CODE_MARKET = 2;
     public static final int REQUEST_CODE_WILDERNESS = 1;
-    public static final int REQUEST_CODE_OVERVIEW = 1;
+    public static final int REQUEST_CODE_OVERVIEW = 10;
 
 
     GameData map;
@@ -144,7 +144,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         });
         overview.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivityForResult(Overview.getIntent(Navigation.this), REQUEST_CODE_WILDERNESS);
+                startActivityForResult(Overview.getIntent(Navigation.this), REQUEST_CODE_OVERVIEW);
 
             }
 
@@ -179,9 +179,13 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             checkIfTheyWon(map.getPlayer());
 
         }
-        else if(requestCode == Overview.RESTART_KEY && requestCode == REQUEST_CODE_OVERVIEW)
+        else if(resultCode == Overview.RESTART_KEY && requestCode == REQUEST_CODE_OVERVIEW)
         {
-
+            restartGame("Game will restart now");
+        }
+        else if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_OVERVIEW)
+        {
+            ai_frag.updateInfo();
         }
     }
 

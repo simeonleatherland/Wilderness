@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.sl.wilderness.ModelPack.Area;
+import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.R;
 
 
@@ -24,7 +25,6 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
     Area currentArea;
     TextView desc,curr,type,error;
     CheckBox checkBox;
-
     Activity activity;
 
     String returnDescription = null;
@@ -34,7 +34,6 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
     }
 
@@ -53,32 +52,31 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
         checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         checkBox.setOnClickListener(this);
 
-        if(currentArea != null)
-        {
-            if(currentArea.isStarred())
-            {
-                checkBox.setChecked(true);
-            }
-            else
-            {
-                checkBox.setChecked(false);
-            }
+        GameData map = GameData.getInstance();
 
-            desc.setText("Description: " + currentArea.getDescription());
-            curr.setText("Current Area: Row" + currentArea.getRow()  + " Col" + currentArea.getCol());
-            if(currentArea.isTown())
-            {
-                type.setText("Town");
-            }
-            else
-            {
-                type.setText("Wilderness");
-            }
+        int currRow = map.getPlayer().getRowLocation();
+        int currCol = map.getPlayer().getColLocation();
+        //get the current area
+        currentArea = map.getArea(currRow,currCol);
+
+        if(currentArea.isStarred())
+        {
+            checkBox.setChecked(true);
         }
         else
         {
-            curr.setText("Please select a area first");
-            desc.setText("before you can see area info");
+            checkBox.setChecked(false);
+        }
+
+        desc.setText("Description: " + currentArea.getDescription());
+        curr.setText("Current Area: Row" + currentArea.getRow()  + " Col" + currentArea.getCol());
+        if(currentArea.isTown())
+        {
+            type.setText("Town");
+        }
+        else
+        {
+            type.setText("Wilderness");
         }
 
 
@@ -159,7 +157,7 @@ public class AreaInfo extends Fragment implements View.OnClickListener{
         this.returnDescription = returnDesc;
         this.desc.setText("Description: " + returnDesc);
         currentArea.setDescription(returnDesc);
-        ((OnDescriptionClickedListener) activity).updateAreaInDB(currentArea);
+        ((OnDescriptionClickedListener)activity).updateAreaInDB(currentArea);
 
     }
 

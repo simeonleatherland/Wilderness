@@ -1,6 +1,7 @@
 package com.example.sl.wilderness.Activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +33,7 @@ import com.example.sl.wilderness.R;
 
 import java.util.List;
 
-public class Overview extends AppCompatActivity implements StatusBar.StatusBarObserver {
+public class Overview extends AppCompatActivity implements StatusBar.StatusBarObserver, AreaInfo.OnDescriptionClickedListener {
 
     private WildernessDb db;
     private GameData mapInstance;
@@ -218,5 +220,57 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
 
     }
 
+    @Override
+    public void editDescription() {
+        //needed something off the stack so that i could set it from an inner class
+        final String[] desc = new String[1];
+        desc[0] = null;
 
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Overview.this);
+        //inflate the layout
+        View mView = getLayoutInflater().inflate(R.layout.description_dialog, null);
+
+        final EditText description = (EditText) mView.findViewById(R.id.write);
+        Button save = (Button) mView.findViewById(R.id.save);
+        Button cancel = (Button) mView.findViewById(R.id.cancel);
+
+
+        builder.setView(mView);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // desc = description.getText().toString();
+                Toast.makeText(Overview.this, "Description Canceled", Toast.LENGTH_SHORT).show();
+
+                dialog.dismiss();
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!description.getText().toString().isEmpty()) {
+                    // desc = description.getText().toString();
+                    Toast.makeText(Overview.this, "Saved Description", Toast.LENGTH_SHORT).show();
+                    ai_frag.setReturnedDescription(description.getText().toString());
+
+                } else {
+                    Toast.makeText(Overview.this, "No Description changed", Toast.LENGTH_SHORT).show();
+                }
+                dialog.dismiss();
+
+            }
+        });
+
+
+    }
+
+    @Override
+    public void updateAreaInDB(Area area) {
+        db.updateArea(area);
+    }
 }

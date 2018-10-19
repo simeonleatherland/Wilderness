@@ -226,7 +226,7 @@ public class GameData {
                 for(int kk = 0; kk< numItems; kk++)
                 {
                     //generate a number to generate
-                    num = getRandomNumberInRange(0, 150);
+                    num = getRandomNumberInRange(0, 155);
                     //if they have all been filled, only fill the rest with the other stuff
                     if(!(jadeDrop && iceDrop &&  mapDrop && smellDrop && improvDrop && benkenobiDrop))
                     {
@@ -237,29 +237,54 @@ public class GameData {
                         }
                         else if(num >= 10 && num < 20)
                         {
-                            itemList1.add(new BenKenobi("Backpack", 7,4,0,0,false));
+                            itemList1.add(new BenKenobi("ben kenobi", 7,4,0,0,false));
                             benkenobiDrop = true;
                         }
                         else if(num >= 20 && num < 30)
                         {
-                            itemList1.add(new JadeMonkey("Backpack", 7,4,0,0,false));
+                            itemList1.add(new JadeMonkey("jade", 7,4,0,0,false));
                             jadeDrop = true;
                         }
                         else if(num >= 30 && num < 40)
                         {
-                            itemList1.add(new IceScraper("Backpack", 7,4,0,0,false));
+                            itemList1.add(new IceScraper("ice scrapper", 7,4,0,0,false));
                             iceDrop = true;
                         }
                         else if(num >= 40 && num < 50)
                         {
-                            itemList1.add(new Roadmap("Backpack", 7,4,0,0,false));
+                            itemList1.add(new Roadmap("road map", 7,4,0,0,false));
                             mapDrop = true;
                         }
                         else if(num >= 50 && num < 60)
                         {
-                            itemList1.add(new ImprobabilityDrive("Backpack", 7,4,0,0,false));
+                            itemList1.add(new ImprobabilityDrive("improbability drive", 7,4,0,0,false));
                             improvDrop = true;
                         }
+                        else if( num >= 60 && num < 95)
+                        {
+                            itemList1.add(new Food("Food", 7,4,0,0,false));
+                        }
+                        else if( num >= 95 && num < 110)
+                        {
+                            itemList1.add(new Axe("axe", 7,4,0,0,false));
+
+                        }
+                        else if( num >= 110 && num < 125)
+                        {
+                            itemList1.add(new Backpack("Backpack", 7,4,0,0,false));
+
+                        }
+                        else if( num >= 125 && num < 140)
+                        {
+                            itemList1.add(new Shovel("Backpack", 7,4,0,0,false));
+
+                        }
+                        else if( num >= 140 && num < 155)
+                        {
+                            itemList1.add(new Axe("Backpack", 7,4,0,0,false));
+
+                        }
+                        
                     }
                     else
                     {
