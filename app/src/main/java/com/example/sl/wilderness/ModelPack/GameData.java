@@ -125,7 +125,7 @@ public class GameData {
 
 
     //this is only a temp fix
-    public void generateMap()
+    public void regenerateGenerateMap()
     {
         ArrayList<Item> itemList1 = new ArrayList<>();
         itemList1.add(new PortaSmell("Apples", 3, 2,0,0,false));
@@ -211,160 +211,111 @@ public class GameData {
 
     }
 
-    public void randomRegenerate()
-    {
+    public void generateMap() {
+        Area area1;
         //boolean to only drop one of each of the winning items
         boolean jadeDrop = false, iceDrop = false, mapDrop = false, smellDrop = false, improvDrop = false, benkenobiDrop = false;
-        int num = getRandomNumberInRange(0,150);
-        for(int ii = 0; ii < ROW; ii++)
-        {
-            for(int jj = 0; jj < COL; jj++)
-            {
+        int num = getRandomNumberInRange(0, 150);
+        for (int ii = 0; ii < ROW; ii++) {
+            for (int jj = 0; jj < COL; jj++) {
                 ArrayList<Item> itemList1 = new ArrayList<>();
                 //generate how many items in an area
                 int numItems = getRandomNumberInRange(1, 5);
-                for(int kk = 0; kk< numItems; kk++)
-                {
+                for (int kk = 0; kk < numItems; kk++) {
                     //generate a number to generate
                     num = getRandomNumberInRange(0, 155);
                     //if they have all been filled, only fill the rest with the other stuff
-                    if(!(jadeDrop && iceDrop &&  mapDrop && smellDrop && improvDrop && benkenobiDrop))
-                    {
-                        if(num >= 0 && num < 10)
+                    if ((num >= 0 && num < 10)) {
+                        if(smellDrop)
                         {
-                            itemList1.add(new PortaSmell("portasmell", 3, 2,ii,jj,false));
+                            num +=10;
+                        }
+                        else
+                        {
+                            itemList1.add(new PortaSmell("portasmell", 3, 2, ii, jj, false));
                             smellDrop = true;
                         }
-                        else if(num >= 10 && num < 20)
+                    }
+                    if (num >= 10 && num < 20) {
+                        itemList1.add(new BenKenobi("ben kenobi", 7, 4, ii, jj, false));
+                        benkenobiDrop = true;
+                    }
+                    if (num >= 20 && num < 30) {
+                        if(jadeDrop)
                         {
-                            itemList1.add(new BenKenobi("ben kenobi", 7,4,0,0,false));
-                            benkenobiDrop = true;
+                            num += 10;
                         }
-                        else if(num >= 20 && num < 30)
+                        else
                         {
-                            itemList1.add(new JadeMonkey("jade", 7,4,0,0,false));
+                            itemList1.add(new JadeMonkey("jade", 7, 4, ii, jj, false));
                             jadeDrop = true;
                         }
-                        else if(num >= 30 && num < 40)
+                    }
+                    if (num >= 30 && num < 40) {
+                        if(iceDrop)
                         {
-                            itemList1.add(new IceScraper("ice scrapper", 7,4,0,0,false));
+                            num +=10;
+                        }
+                        else
+                        {
+                            itemList1.add(new IceScraper("ice scrapper", 7, 4, ii, jj, false));
                             iceDrop = true;
                         }
-                        else if(num >= 40 && num < 50)
+                    }
+                    if (num >= 40 && num < 50) {
+                        if(mapDrop)
                         {
-                            itemList1.add(new Roadmap("road map", 7,4,0,0,false));
+                            num += 10;
+                        }
+                        else
+                        {
+                            itemList1.add(new Roadmap("road map", 7, 4, ii, jj, false));
                             mapDrop = true;
                         }
-                        else if(num >= 50 && num < 60)
+
+                    }
+                    if (num >= 50 && num < 60) {
+                        if(improvDrop)
                         {
-                            itemList1.add(new ImprobabilityDrive("improbability drive", 7,4,0,0,false));
+                            num +=10;
+                        }
+                        else
+                        {
+                            itemList1.add(new ImprobabilityDrive("improbability drive", 7, 4, ii, jj, false));
                             improvDrop = true;
                         }
-                        else if( num >= 60 && num < 95)
-                        {
-                            itemList1.add(new Food("Food", 7,4,0,0,false));
-                        }
-                        else if( num >= 95 && num < 110)
-                        {
-                            itemList1.add(new Axe("axe", 7,4,0,0,false));
-
-                        }
-                        else if( num >= 110 && num < 125)
-                        {
-                            itemList1.add(new Backpack("Backpack", 7,4,0,0,false));
-
-                        }
-                        else if( num >= 125 && num < 140)
-                        {
-                            itemList1.add(new Shovel("Backpack", 7,4,0,0,false));
-
-                        }
-                        else if( num >= 140 && num < 155)
-                        {
-                            itemList1.add(new Axe("Backpack", 7,4,0,0,false));
-
-                        }
-                        
                     }
-                    else
-                    {
-
+                    if (num >= 60 && num < 95) {
+                        itemList1.add(new Food("Food", 7, 4, ii, jj, false));
+                    }
+                    if (num >= 95 && num < 110) {
+                        itemList1.add(new Axe("axe", 7, 4, ii, jj, false));
+                    }
+                    if (num >= 110 && num < 125) {
+                        itemList1.add(new Backpack("Backpack", 7, 4, ii, jj, false));
+                    }
+                    if (num >= 125 && num < 140) {
+                        itemList1.add(new Shovel("Backpack", 7, 4, ii, jj, false));
+                    }
+                    if (num >= 140 && num < 155) {
+                        itemList1.add(new Axe("ace", 7, 4, ii, jj, false));
                     }
 
                 }
 
-                if(num < 75)//75% chance of a town
+                if (num < 75)//75% chance of a town
                 {
-                    Area area1 = new Area(true, itemList1, "some area", false, false, ii, jj);
+                    area1 = new Area(true, itemList1, "some area", false, false, ii, jj);
+                } else {
+                    area1 = new Area(false, itemList1, "some area", false, false, ii, jj);
                 }
-                else
-                {
-                    Area area1 = new Area(false, itemList1, "some area", false, false, ii, jj);
-                }
+                grid[ii][jj] = area1;
             }
-
         }
 
-        ArrayList<Item> itemList1 = new ArrayList<>();
-        itemList1.add(new PortaSmell("portasmell", 3, 2,0,0,false));
-        itemList1.add(new BenKenobi("Backpack", 7,4,0,0,false));
-        itemList1.add(new Knife("Knife", 7,4,0,0,false));
-        Area area1 = new Area(true, itemList1, "some area", false, false, 0,0);
-
-
-
-        ArrayList<Item> itemList2 = new ArrayList<>();
-        itemList2.add(new Food("Watermelon", 2,5,0,1,false));
-        itemList2.add(new Shovel("Shovel", 6,5,0,1,false));
-        Area area2 = new Area(true, itemList2, "some area", false, false, 0,1);
-
-        ArrayList<Item> itemList3 = new ArrayList<>();
-        itemList3.add(new Food("Pineapple", 5,5,0,2,false));
-        itemList3.add(new ImprobabilityDrive("Compass", 3,5,0,2,false));
-        Area area3 = new Area(false, itemList3, "some area", false, false, 0,2);
-
-        ArrayList<Item> itemList4 = new ArrayList<>();
-        itemList4.add(new Food("Pear", 6,2,1,0,false));
-        itemList4.add(new Knife ("knife", 0,3,1,0,false));
-        Area area4 = new Area(true, itemList4, "some area", false, false, 1,0);
-
-        ArrayList<Item> itemList5 = new ArrayList<>();
-        itemList5.add(new Food("Banana", 5,4,1,1,false));
-        itemList5.add(new Compass ("Nothing", 0,3,1,1,false));
-        Area area5 = new Area(false, itemList5, "some area", false, false, 1,1);
-
-        ArrayList<Item> itemList6 = new ArrayList<>();
-        itemList6.add(new Food("Tomato", 4,3,1,2,false));
-        itemList6.add(new Gun("Gun", 4,3,1,2,false));
-        Area area6 = new Area(true, itemList6, "some area", false, false, 1,2);
-
-        ArrayList<Item> itemList7 = new ArrayList<>();
-        itemList7.add(new Food("Grapes", 3,4,2,0,false));
-        itemList7.add(new Torch("Torch", 3,4,2,0,false));
-        Area area7 = new Area(false, itemList7, "some area", false, false, 2,0);
-
-        ArrayList<Item> itemList8 = new ArrayList<>();
-        itemList8.add(new Food("Rockmelon", 2,4,2,1,false));
-        itemList8.add(new Waterbottle("Waterbottle", 2,8,2,1,false));
-        Area area8 = new Area(true, itemList8, "some area", false, false, 2,1);
-
-        ArrayList<Item> itemList9 = new ArrayList<>();
-        itemList9.add(new Food("Bread", 3, 3,2,2,false));
-        itemList9.add(new Axe("Axe", 9,4,2,2,false));
-        Area area9 = new Area(false, itemList9, "some area", false, false, 2,2);
-
-        grid[0][0]= area1;
-
-        grid[0][1]= area2;
-        grid[0][2]= area3;
-        grid[1][0]= area4;
-        grid[1][1]= area5;
-        grid[1][2]= area6;
-        grid[2][0]= area7;
-        grid[2][1]= area8;
-        grid[2][2]= area9;
-
     }
+
+
 
 
 
