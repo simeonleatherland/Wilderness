@@ -337,7 +337,6 @@ public class Wilderness extends AppCompatActivity implements StatusBar.StatusBar
                 if(l.get(ii).getType() == Food.TYPE)
                 {   //increase the health of the player
                     currentPlayer.pickupFood((Food)l.get(ii));
-
                 }
                 else
                 {

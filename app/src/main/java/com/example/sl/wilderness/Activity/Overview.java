@@ -294,6 +294,7 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
 
     @Override
     public void updateAreaInDB(Area area) {
+        mapAdapter.notifyDataSetChanged();
         db.updateArea(area);
     }
 }
