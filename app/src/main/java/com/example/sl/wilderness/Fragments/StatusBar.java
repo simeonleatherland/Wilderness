@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.sl.wilderness.ModelPack.GameData;
 import com.example.sl.wilderness.ModelPack.Player;
 import com.example.sl.wilderness.R;
 
@@ -42,9 +43,8 @@ public class StatusBar extends Fragment implements View.OnClickListener{
         restart = (Button) v.findViewById(R.id.restart);
         restart.setOnClickListener(this);
 
-        health.setText("Health: " + healtha);
-        cash.setText("Cash: " + cashinitial);
-        equipment.setText("Mass: " + equip);
+        GameData map = GameData.getInstance();
+        updateAll(map.getPlayer());
 
         return v;
     }

@@ -87,9 +87,9 @@ public class GameData {
     private void unpackPlayer(WildernessDb db) {
         Player mainCharacter = db.getCurrPlayer();
         if (mainCharacter == null) {
-            mainCharacter = new Player(0, 0, 0, 0, 100);
-            db.insertPlayer(mainCharacter);
-            setPlayer(mainCharacter);
+            player = new Player(100, 0, 0, 0, 100);
+            db.insertPlayer(player);
+            setPlayer(player);
         }
         else
         {
@@ -200,7 +200,6 @@ public class GameData {
 
         grid[row][col].getItems().add(new Roadmap("improbability drive", 7, 4, row, col, false));
 
-        grid[0][0].getItems().add(new PortaSmell("improbability drive", 7, 4, 0, 0, false));
 
     }
 

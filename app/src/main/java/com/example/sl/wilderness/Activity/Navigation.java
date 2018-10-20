@@ -77,6 +77,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         //setup all the buttons for the activity, north, south, east or west
         setupViews();
         onClickListeners();
+        initialMove();
     }
 
 
@@ -243,6 +244,7 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         ai_frag.displayError(errorMessage);
     }
 
+
     public void playerMoves() {
         //update the current row and col of the player
         int currRow = map.getPlayer().getRowLocation();
@@ -327,16 +329,23 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
         restart = (Button) findViewById(R.id.restart);
         overview = (Button) findViewById(R.id.overview);
 
-        //proably will be from the data base, but will be done later on
+    }
+
+    //SAME AS PLAYER MOVE BUT WITHOUT HEALTH DEGENERATION
+    public void initialMove()
+    {
+
+        //update the current row and col of the player
         int currRow = map.getPlayer().getRowLocation();
         int currCol = map.getPlayer().getColLocation();
-        //get the current area
-        map.getArea(currRow,currCol).setExplored();
-        //set the current area
-        ai_frag.setCurrentArea(map.getArea(currRow, currCol));
+        Area currentArea = map.getArea(currRow, currCol);
 
-        sb_frag.setupInitial(map.getPlayer());
+        //update the area in database to be visited and the player
+        currentArea.setExplored();
+        db.updateArea(currentArea);
 
+        db.updatePlayer(map.getPlayer());
+        db.dumpCursor();
 
     }
 
@@ -354,17 +363,29 @@ public class Navigation extends AppCompatActivity implements AreaInfo.OnDescript
             db = new WildernessDb(Navigation.this);
             //load classfields into database if they exist
             db.load();
+
+            //reset map instance with database
             map = map.resetInstance(db);
-            map.getPlayer().setCash(100);
-            map.getArea(map.getPlayer().getRowLocation(),map.getPlayer().getColLocation()).setExplored();
+            //set the players
+            Player currentPlayer = map.getPlayer();
+
+            //set the initial cash
+            currentPlayer.setCash(100);
+            //get the current area
+            Area current = map.getArea(currentPlayer.getRowLocation(),currentPlayer.getColLocation());
+            //set it to be explored
+            current.setExplored();
             //reset the map data and the player in the STATUS BAR FRAG
             //update the UI with the new reseted values
-            sb_frag.updateHealth(map.getPlayer().getHealth());
-            sb_frag.updateCash(map.getPlayer().getCash());
-            sb_frag.updateEquipmentMass(map.getPlayer().getEquipmentMass());
+            sb_frag.updateAll(currentPlayer);
+            //update it in the database
+            db.updateArea(current);
+            db.updatePlayer(currentPlayer);
+
             //reset area data in the AREA FRAG\
             resetAreaFragData();
             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+            db.dumpCursor();
 
         }
 

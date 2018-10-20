@@ -87,6 +87,7 @@ public class WildernessDb {
         {
             currPlayer.setEquipment(new LinkedList<Equipment>());
         }
+
         //get the grid of stuff
         grid = getMapGrid();
         //check if its null
