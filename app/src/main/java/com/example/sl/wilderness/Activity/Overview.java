@@ -178,11 +178,25 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
             }
             else if(!s.isTown()) //if its been explored and it is wilderness
             {
-                image1.setImageResource(R.drawable.ic_tree1);
+                if(currentPlayer.getRowLocation() == mapElement.getRow() && currentPlayer.getColLocation() == mapElement.getCol())
+                {
+                    image1.setImageResource(R.drawable.accessible_wilderness);
+                }
+                else
+                {
+                    image1.setImageResource(R.drawable.ic_tree1);
+                }
             }
             else if(s.isTown()) // if the place is a town
             {
-                image1.setImageResource(R.drawable.ic_building1);
+                if(currentPlayer.getRowLocation() == mapElement.getRow() && currentPlayer.getColLocation() == mapElement.getCol())
+                {
+                    image1.setImageResource(R.drawable.ic_accessible_black_24dp);
+                }
+                else
+                {
+                    image1.setImageResource(R.drawable.ic_building1);
+                }
             }
         }
     }
@@ -206,7 +220,7 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
         }
         @Override
         public void onBindViewHolder(MapHolder holder, int position) {
-            Area s = mapInstance.getArea(position%mapInstance.ROW, position/mapInstance.ROW);
+            Area s = mapInstance.getArea(position%GameData.ROW, position/GameData.ROW);
             holder.bind(s);
         }
 

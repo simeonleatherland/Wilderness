@@ -60,6 +60,13 @@ public class StatusBar extends Fragment implements View.OnClickListener{
         this.equip = p.getEquipmentMass();
     }
 
+    public void updateAll(Player p)
+    {
+        setupInitial(p);
+        health.setText("Health: " + healtha);
+        cash.setText("Cash: " + cashinitial);
+        equipment.setText("Mass: " + equip);
+    }
 
     public void updateHealth(double inHealth)
     {

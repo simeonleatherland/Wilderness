@@ -302,6 +302,7 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
                 case R.id.usebutton: //use an item
                     //do some stuff here to use the item
                     useItem(data);
+                   // updateAreaData();
                     break;
 
             }
@@ -310,21 +311,25 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
         }
     }
 
-    //PUT THIS INSIDE INDIVIDUAL ACTIVITIES
+    //PUT THIS INSIDE INDIVIDUAL CLASSES AS ABSTRACT USER METHOD IF YOU HAVE TIME
     private void useItem(Item data) {
-        currentPlayer.getEquipment().remove((Equipment)data);
         if(data.getType() == PortaSmell.TYPE)
         {
+//            currentPlayer.getEquipment().remove((Equipment)data);
+            currentPlayer.dropEquipment((Equipment)data);
+            updateAreaData();
             startActivityForResult(SmellOScope.getIntent(Market.this), REQUEST_CODE_SMELL);
-
         }
         else if(data.getType() == ImprobabilityDrive.TYPE)
         {
             currentPlayer.dropEquipment((Equipment)data);
             reGenerateMap(currentPlayer);
+            currentPlayer.getEquipment().remove((Equipment)data);
+
         }
         else if(data.getType() == BenKenobi.TYPE)
         {
+            currentPlayer.getEquipment().remove((Equipment)data);
             List<Item> l = currArea.getItems();
             //pickup everything for free
             for(int ii = 0; ii < currArea.getItems().size(); ii++)
@@ -347,6 +352,10 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
             }
             currArea.getItems().clear();
             updateAreaData();
+        }
+        else
+        {
+            Toast.makeText(this, "Item has no use", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -397,7 +406,8 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
 
     public void updateAreaData()
     {
-        //update the area and the player in the database... NEED TO FIX THIS
+        sb_frag.updateAll(currentPlayer);
+
         db.updateArea(currArea);
         db.updatePlayer(currentPlayer);
         mapInstance.setPlayer(currentPlayer);
