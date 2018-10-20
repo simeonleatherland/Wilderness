@@ -317,19 +317,23 @@ public class Market extends AppCompatActivity implements StatusBar.StatusBarObse
         {
 //            currentPlayer.getEquipment().remove((Equipment)data);
             currentPlayer.dropEquipment((Equipment)data);
+            db.removeItem(data);
             updateAreaData();
             startActivityForResult(SmellOScope.getIntent(Market.this), REQUEST_CODE_SMELL);
         }
         else if(data.getType() == ImprobabilityDrive.TYPE)
         {
             currentPlayer.dropEquipment((Equipment)data);
+            db.removeItem(data);
             reGenerateMap(currentPlayer);
             currentPlayer.getEquipment().remove((Equipment)data);
 
         }
         else if(data.getType() == BenKenobi.TYPE)
         {
-            currentPlayer.getEquipment().remove((Equipment)data);
+            currentPlayer.dropEquipment((Equipment)data);
+            db.removeItem(data);
+
             List<Item> l = currArea.getItems();
             //pickup everything for free
             for(int ii = 0; ii < currArea.getItems().size(); ii++)

@@ -100,6 +100,7 @@ public class WildernessDb {
 
     }
 
+    //sort all the items from the database into the respective grid
     private void sortItemsToAreas(Area[][] grid, List<Item> itemsList) {
         for(Item i : itemsList)
         {
@@ -370,6 +371,7 @@ public class WildernessDb {
         }
         itemsList = inArea;
         heldList = held;
+        Log.i("LOG SIZE", "num items" + itemsList.size() + " "+ heldList.size());
     }
 
 

@@ -181,7 +181,12 @@ public class Player {
 
 
     public void setEquipmentMass(double equipmentMass) {
+
         this.equipmentMass = equipmentMass;
+        if(this.equipmentMass < 0)
+        {
+            this.equipmentMass = 0;
+        }
     }
 
     public int getRowLocation() {
