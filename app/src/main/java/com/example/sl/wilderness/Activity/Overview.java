@@ -178,9 +178,14 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
             }
             else if(!s.isTown()) //if its been explored and it is wilderness
             {
+
                 if(currentPlayer.getRowLocation() == mapElement.getRow() && currentPlayer.getColLocation() == mapElement.getCol())
                 {
                     image1.setImageResource(R.drawable.accessible_wilderness);
+                }
+                else if(s.isStarred())
+                {
+                    image1.setImageResource(R.drawable.star_wilderness);
                 }
                 else
                 {
@@ -192,6 +197,10 @@ public class Overview extends AppCompatActivity implements StatusBar.StatusBarOb
                 if(currentPlayer.getRowLocation() == mapElement.getRow() && currentPlayer.getColLocation() == mapElement.getCol())
                 {
                     image1.setImageResource(R.drawable.ic_accessible_black_24dp);
+                }
+                else if(s.isStarred())
+                {
+                    image1.setImageResource(R.drawable.start_town);
                 }
                 else
                 {
